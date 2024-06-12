@@ -6,10 +6,12 @@ import rasterio
 import simplekml
 from shapely.geometry import Point
 
-# Load the starting point and clusters layers from GeoPackage
+# Load the starting point, clusters, and zone of interest layers from GeoPackage
 starting_point_gdf = gpd.read_file(
     'path_to_geopackage.gpkg', layer='starting_point_layer')
 trees_gdf = gpd.read_file('path_to_geopackage.gpkg', layer='trees_layer')
+zone_of_interest_gdf = gpd.read_file(
+    'path_to_geopackage.gpkg', layer='zone_of_interest_layer')
 
 starting_point = starting_point_gdf.geometry.iloc[0]
 
@@ -17,11 +19,15 @@ starting_point = starting_point_gdf.geometry.iloc[0]
 dsm_path = 'path_to_dsm_layer.tif'
 dsm_dataset = rasterio.open(dsm_path)
 
+# Filter trees to only include those within the zone of interest
+trees_in_zone_gdf = gpd.overlay(
+    trees_gdf, zone_of_interest_gdf, how='intersection')
+
 # Calculate the centroid for each tree polygon
-trees_gdf['centroid'] = trees_gdf.geometry.centroid
+trees_in_zone_gdf['centroid'] = trees_in_zone_gdf.geometry.centroid
 
 # Group trees by cluster_id
-clusters = trees_gdf.groupby('cluster_id')
+clusters = trees_in_zone_gdf.groupby('cluster_id')
 
 # Select random centroids for each cluster
 num_waypoints_per_cluster = 5
