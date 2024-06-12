@@ -4,6 +4,7 @@ import geopandas as gpd
 import numpy as np
 import rasterio
 import simplekml
+from lxml import etree
 from shapely.geometry import Point
 
 # Load the starting point and clusters layers from GeoPackage
@@ -110,5 +111,36 @@ for i, (point, elevation) in enumerate(zip(sorted_points, elevations)):
     wp.description = "Take photo here"
     # Add any additional DJI-specific parameters if needed
 
-# Save KML file
-kml.save('dji_waypoints_with_elevation.kml')
+# Save KML file as template.kml
+kml.save('template.kml')
+
+# Generate waylines.wpml
+waypoints = []
+for i, (point, elevation) in enumerate(zip(sorted_points, elevations)):
+    waypoint = {
+        "longitude": point.x,
+        "latitude": point.y,
+        "altitude": elevation,
+        "heading": 0,
+        "gimbal_pitch": -90,
+        "action": "take_photo"
+    }
+    waypoints.append(waypoint)
+
+# Create the WPML XML structure
+root = etree.Element("Mission")
+wayline = etree.SubElement(root, "Wayline")
+for i, wp in enumerate(waypoints):
+    waypoint = etree.SubElement(wayline, "Waypoint", id=str(i + 1))
+    etree.SubElement(waypoint, "Longitude").text = str(wp["longitude"])
+    etree.SubElement(waypoint, "Latitude").text = str(wp["latitude"])
+    etree.SubElement(waypoint, "Altitude").text = str(wp["altitude"])
+    etree.SubElement(waypoint, "Heading").text = str(wp["heading"])
+    etree.SubElement(waypoint, "GimbalPitch").text = str(wp["gimbal_pitch"])
+    action = etree.SubElement(waypoint, "Action")
+    etree.SubElement(action, "Type").text = wp["action"]
+
+# Save waylines.wpml
+tree = etree.ElementTree(root)
+with open("waylines.wpml", "wb") as f:
+    tree.write(f, pretty_print=True, xml_declaration=True, encoding="UTF-8")
