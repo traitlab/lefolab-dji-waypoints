@@ -6,12 +6,20 @@ import rasterio
 import simplekml
 from shapely.geometry import Point
 
-# Load the starting point, clusters, and zone of interest layers from GeoPackage
+# Load the starting point and clusters layers from GeoPackage
 starting_point_gdf = gpd.read_file(
     'path_to_geopackage.gpkg', layer='starting_point_layer')
 trees_gdf = gpd.read_file('path_to_geopackage.gpkg', layer='trees_layer')
-zone_of_interest_gdf = gpd.read_file(
-    'path_to_geopackage.gpkg', layer='zone_of_interest_layer')
+
+# Load the zone of interest layer from GeoPackage (if provided)
+zone_of_interest_path = 'path_to_geopackage.gpkg'
+zone_of_interest_layer = 'zone_of_interest_layer'
+try:
+    zone_of_interest_gdf = gpd.read_file(
+        zone_of_interest_path, layer=zone_of_interest_layer)
+    zone_of_interest_provided = True
+except ValueError:
+    zone_of_interest_provided = False
 
 starting_point = starting_point_gdf.geometry.iloc[0]
 
@@ -19,9 +27,12 @@ starting_point = starting_point_gdf.geometry.iloc[0]
 dsm_path = 'path_to_dsm_layer.tif'
 dsm_dataset = rasterio.open(dsm_path)
 
-# Filter trees to only include those within the zone of interest
-trees_in_zone_gdf = gpd.overlay(
-    trees_gdf, zone_of_interest_gdf, how='intersection')
+# Filter trees to only include those within the zone of interest (if provided)
+if zone_of_interest_provided and not zone_of_interest_gdf.empty:
+    trees_in_zone_gdf = gpd.overlay(
+        trees_gdf, zone_of_interest_gdf, how='intersection')
+else:
+    trees_in_zone_gdf = trees_gdf
 
 # Calculate the centroid for each tree polygon
 trees_in_zone_gdf['centroid'] = trees_in_zone_gdf.geometry.centroid
@@ -69,15 +80,35 @@ def get_elevation_from_dsm(point, dataset):
 elevations = [get_elevation_from_dsm(
     point, dsm_dataset) + 10 for point in sorted_points]
 
-# Create KML file
+# Create KML file compatible with DJI
 kml = simplekml.Kml()
-# Add starting point (no elevation adjustment needed)
-kml.newpoint(name="Start", coords=[(starting_point.x, starting_point.y)])
+document = kml.newdocument(name='DJI Waypoints')
 
-# Add waypoints in sorted order with elevation
+# Add starting point (no elevation adjustment needed)
+start = kml.newpoint(name="Start", coords=[
+                     (starting_point.x, starting_point.y)])
+start.description = "Takeoff Point"
+start.altitudemode = simplekml.AltitudeMode.relativetoground
+start.altitude = 0
+
+# Add waypoints in sorted order with elevation and additional parameters for DJI
 for i, (point, elevation) in enumerate(zip(sorted_points, elevations)):
-    kml.newpoint(name=f"Waypoint {i+1}",
-                 coords=[(point.x, point.y, elevation)])
+    wp = kml.newpoint(name=f"Waypoint {i+1}",
+                      coords=[(point.x, point.y, elevation)])
+    wp.altitudemode = simplekml.AltitudeMode.relativetoground
+    wp.altitude = elevation
+    wp.extrude = 1
+    wp.lookat = simplekml.LookAt(
+        longitude=point.x,
+        latitude=point.y,
+        altitude=elevation,
+        heading=0,
+        tilt=90,
+        range=10,
+        altitudemode=simplekml.AltitudeMode.relativetoground
+    )
+    wp.description = "Take photo here"
+    # Add any additional DJI-specific parameters if needed
 
 # Save KML file
-kml.save('waypoints_with_elevation.kml')
+kml.save('dji_waypoints_with_elevation.kml')
