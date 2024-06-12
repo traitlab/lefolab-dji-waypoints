@@ -1,3 +1,17 @@
+# my own exclusion
+secrets
+/notebooks/
+*.code-workspace
+.vscode
+
+/logs/
+/log/
+/git-notes.txt
+/tmp/
+*.zip
+
+nohup.out
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -14,7 +28,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/
 lib64/
 parts/
 sdist/
