@@ -9,6 +9,7 @@ secrets
 /git-notes.txt
 /tmp/
 *.zip
+*.kmz
 
 nohup.out
 

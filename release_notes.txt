@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.2.1 vincent.lefalher@umontreal.ca 20240613
+- major refactoring
+
 0.1.1 vincent.lefalher@umontreal.ca 20240612
 - select trees part of a zone of interest
 

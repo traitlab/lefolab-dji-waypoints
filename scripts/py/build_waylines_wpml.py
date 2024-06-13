@@ -1,4 +1,5 @@
 import csv
+import os
 import xml.etree.ElementTree as ET
 
 
@@ -16,7 +17,7 @@ def read_coordinates_from_csv(csv_file):
 # Paths to the input CSV and KML files
 csv_file_path = 'waypoints.csv'
 input_kml_file_path = 'scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
-output_kml_file_path = 'scripts/wpml/model/Waypoint2/wpmz/updated_waylines.wpml'
+output_kml_file_path = './scripts/wpml/lefolab_waypoint_test1/wpmz/waylines.wpml'
 
 # Read the coordinates from the CSV
 coordinates = read_coordinates_from_csv(csv_file_path)
@@ -28,8 +29,10 @@ tree = ET.parse(input_kml_file_path)
 root = tree.getroot()
 
 # Find the Folder element containing Placemarks
-namespaces = {'kml': "http://www.opengis.net/kml/2.2",
-              'wpml': "http://www.dji.com/wpmz/1.0.6"}
+namespaces = {
+    'kml': "http://www.opengis.net/kml/2.2",
+    'wpml': "http://www.dji.com/wpmz/1.0.6"
+}
 folder = root.find('.//kml:Folder', namespaces)
 
 # Remove existing Placemark elements
@@ -86,11 +89,12 @@ waypoint_gimbal_yaw_angle = '0'
 
 # Create new Placemark elements based on the CSV coordinates
 for index, (lat, lon) in enumerate(coordinates):
-    placemark = ET.Element('Placemark')
+    placemark = ET.Element(f'{{{namespaces["kml"]}}}Placemark')
 
-    point = ET.SubElement(placemark, 'Point')
-    coordinates_elem = ET.SubElement(point, 'coordinates')
-    coordinates_elem.text = f'{lon},{lat}'
+    point = ET.SubElement(placemark, f'{{{namespaces["kml"]}}}Point')
+    coordinates_element = ET.SubElement(
+        point, f'{{{namespaces["kml"]}}}coordinates')
+    coordinates_element.text = f'{lon},{lat}'
 
     wpml_index = ET.SubElement(placemark, f'{{{namespaces["wpml"]}}}index')
     wpml_index.text = str(index)
@@ -261,4 +265,5 @@ for index, (lat, lon) in enumerate(coordinates):
     folder.append(placemark)
 
 # Save the updated KML file
+os.makedirs(os.path.dirname(output_kml_file_path), exist_ok=True)
 tree.write(output_kml_file_path, encoding='UTF-8', xml_declaration=True)

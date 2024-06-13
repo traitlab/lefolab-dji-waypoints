@@ -1,4 +1,5 @@
 import csv
+import os
 import xml.etree.ElementTree as ET
 
 
@@ -16,10 +17,14 @@ def read_coordinates_from_csv(csv_file):
 # File paths
 kml_file_path = './scripts/wpml/model/Waypoint2/wpmz/template.kml'
 csv_file_path = 'waypoints.csv'
-output_kml_file_path = './scripts/wpml/model/Waypoint2/wpmz/updated_template.kml'
+output_kml_file_path = './scripts/wpml/lefolab_waypoint_test1/wpmz/template.kml'
 
 # Read the coordinates from the CSV
 coordinates = read_coordinates_from_csv(csv_file_path)
+
+# Register namespaces and parse the KML file
+ET.register_namespace('', "http://www.opengis.net/kml/2.2")
+ET.register_namespace('wpml', "http://www.dji.com/wpmz/1.0.6")
 
 # Parse the KML file
 tree = ET.parse(kml_file_path)
@@ -35,13 +40,7 @@ namespaces = {
 folder = root.find('.//kml:Folder', namespaces)
 
 # Remove all existing Placemark elements with Point
-placemarks_to_remove = []
 for placemark in folder.findall('kml:Placemark', namespaces):
-    point = placemark.find('kml:Point', namespaces)
-    if point is not None:
-        placemarks_to_remove.append(placemark)
-
-for placemark in placemarks_to_remove:
     folder.remove(placemark)
 
 # Variables for common values
@@ -268,4 +267,5 @@ for idx, (lon, lat) in enumerate(coordinates):
     folder.append(placemark)
 
 # Write the updated KML to a new file
+os.makedirs(os.path.dirname(output_kml_file_path), exist_ok=True)
 tree.write(output_kml_file_path, encoding='UTF-8', xml_declaration=True)
