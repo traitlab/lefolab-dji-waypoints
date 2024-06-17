@@ -7,7 +7,7 @@ from pyproj import Transformer
 from lib.config import config
 
 
-class Pipeline:
+class ExtractPoints:
     def __init__(self):
         self.zone_of_interest_gdf = None
         self.starting_point_gdf = None
@@ -100,9 +100,9 @@ class Pipeline:
         self.starting_point_elevation = self.get_elevation_from_dsm(
             self.starting_point, self.dsm_dataset)
 
-    def reproject(self):
+    def reproject(self, epsg_from, epsg_to):
         # Transform coordinates from EPSG:32720 to EPSG:4326
-        transformer = Transformer.from_crs("epsg:32720", "epsg:4326")
+        transformer = Transformer.from_crs(epsg_from, epsg_to)
         self.sorted_points_transformed = [transformer.transform(
             point.y, point.x) for point in self.sorted_points]
         self.starting_point_transformed = transformer.transform(

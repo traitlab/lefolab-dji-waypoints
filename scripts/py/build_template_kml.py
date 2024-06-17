@@ -16,8 +16,8 @@ def read_coordinates_from_csv(csv_file):
 
 # File paths
 kml_file_path = './scripts/wpml/model/Waypoint2/wpmz/template.kml'
-csv_file_path = 'waypoints.csv'
-output_kml_file_path = './scripts/wpml/lefolab_waypoint_test1/wpmz/template.kml'
+csv_file_path = '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints.csv'
+output_kml_file_path = '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
 
 # Read the coordinates from the CSV
 coordinates = read_coordinates_from_csv(csv_file_path)

@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.3.1 vincent.lefalher@umontreal.ca 20240617
+- major refactoring
+
 0.2.1 vincent.lefalher@umontreal.ca 20240613
 - major refactoring
 

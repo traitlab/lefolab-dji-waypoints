@@ -1,15 +1,21 @@
 num_waypoints_per_cluster: 5
 
-tree_polygons_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/20240521_zf2100ha_highres_m3m_rgb_gr0p05_inferclassifier_fixed_subset.gpkg'
-tree_polygons_layer: '20240521_zf2100ha_highres_m3m_rgb_gr0p05_inferclassifier_fixed_subset'
+tree_polygons_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.gpkg'
+tree_polygons_layer: 'trees_polygons'
 
-starting_point_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/starting_point.gpkg'
-starting_point_layer: 'starting_point'
+starting_point_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_starting_point.gpkg'
+starting_point_layer: 'sblz1z2_starting_point'
 
-zone_of_interest_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/zf2100ha_clusters_of_interest.gpkg'
-zone_of_interest_layer: 'zone_of_insterest'
+zone_of_interest_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_zone_of_interest.gpkg'
+zone_of_interest_layer: '20240529_sblz1z2_p1_zone_of_interest'
 
-dsm_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/20240521_zf2100ha_lowres_m3m_dsm_subset.tif'
+dsm_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_dsm_highdis.cog.tif'
 
-global_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-drone-src/global_values.csv'
-points_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-drone-src/waypoints.csv'
+global_csv_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_global_values.csv'
+points_csv_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints.csv'
+
+model_kml_file_path: './scripts/wpml/model/Waypoint2/wpmz/template.kml'
+output_kml_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
+
+model_wpml_file_path: 'scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
+output_wpml_file_path: '/mnt/c/Users/User/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'

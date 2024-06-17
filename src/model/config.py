@@ -21,5 +21,11 @@ class Config(BaseModel):
 
     num_waypoints_per_cluster: int
 
+    model_kml_file_path: FilePath
+    output_kml_file_path: Path
+
+    model_wpml_file_path: FilePath
+    output_wpml_file_path: Path
+
     class Config:
         arbitrary_types_allowed = True

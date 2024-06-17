@@ -17,9 +17,9 @@ def create_kmz(base_dir, kmz_filename):
 # File paths
 # Get current datetime
 current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")
-basename = f'lefolab_waypoint_test1'
-base_dir = f"./scripts/wpml/{basename}"
-kmz_file = f"{basename}_{current_datetime}.kmz"
+basename = f'20240529_sblz1z2_p1'
+base_dir = f"/mnt/c/Users/User/Downloads/UdeM/xprize/{basename}/wpmz"
+kmz_file = f"/mnt/c/Users/User/Downloads/UdeM/xprize/{basename}/{basename}_{current_datetime}.kmz"
 
 # Create the KMZ file
 create_kmz(base_dir, kmz_file)
