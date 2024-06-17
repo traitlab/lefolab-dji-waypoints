@@ -81,7 +81,7 @@ class BuildTemplateKML:
         ET.register_namespace('wpml', "http://www.dji.com/wpmz/1.0.6")
 
         # Parse the KML file
-        self.tree = ET.parse(config.model_kml_file_path)
+        self.tree = ET.parse(config.kml_model_file_path)
         self.root = self.tree.getroot()
 
         # Find the Folder element
@@ -93,7 +93,7 @@ class BuildTemplateKML:
     def addNewPlacemark(self):
 
         # Add new Placemark elements for each coordinate
-        for idx, (lon, lat) in enumerate(self.coordinates):
+        for idx, (lat, lon) in enumerate(self.coordinates):
             placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
             point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')

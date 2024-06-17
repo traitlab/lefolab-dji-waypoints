@@ -14,6 +14,7 @@ class ExtractPoints:
         self.trees_gdf = None
         self.trees_in_zone_gdf = None
         self.clusters = None
+        self.top_polygons_per_cluster = None
         self.epsg_code = None
         self.random_points = []
         self.sorted_points = None
@@ -68,6 +69,9 @@ class ExtractPoints:
 
         # Group trees by cluster_id
         self.clusters = self.trees_in_zone_gdf.groupby('cluster_id')
+
+        # Sort each group by area attribute and select top 5 polygons
+        self.top_polygons_per_cluster = self.clusters.apply(lambda x: x.nlargest(5, 'area')).reset_index(drop=True)
 
         # Extract EPSG code
         self.epsg_code = self.trees_in_zone_gdf.crs.to_epsg()

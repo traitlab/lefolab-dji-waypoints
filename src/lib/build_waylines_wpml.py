@@ -80,7 +80,7 @@ class BuildWaylinesWPML:
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
         ET.register_namespace('wpml', "http://www.dji.com/wpmz/1.0.6")
-        self.tree = ET.parse(config.model_wpml_file_path)
+        self.tree = ET.parse(config.wpml_model_file_path)
         self.root = self.tree.getroot()
 
         self.folder = self.root.find('.//kml:Folder', self.namespaces)
