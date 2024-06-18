@@ -1,2 +1,0 @@
-dsm_file_name,epsg_code,geopackage_file,geopackage_layer,starting_point_elevation_from_dsm,starting_point_latitude,starting_point_longitude
-/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/20240521_zf2100ha_lowres_m3m_dsm_subset.tif,32720,/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/zf2100ha_clusters_of_interest.gpkg,zone_of_insterest,-32767.0,-26.215896155328817,23.338033828789555
