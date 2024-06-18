@@ -20,5 +20,5 @@ output_kml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/2024
 wpml_model_file_path: 'scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
 output_wpml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'
 
-kmz_base_name: '20240529-sblz1z2-p1'
+kmz_base_name: '20240529_sblz1z2_p1'
 kmz_root_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'

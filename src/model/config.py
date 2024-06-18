@@ -9,7 +9,7 @@ class Config(BaseModel):
     zone_of_interest_path: FilePath
     dsm_file_path: FilePath
 
-    base_height_ortho: int
+    base_height_orthometric: int
 
     from_epsg: str
     to_epsg: str
