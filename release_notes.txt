@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.4.2 vincent.lefalher@umontreal.ca 20240618
+- add create KMZ class
+
 0.4.1 vincent.lefalher@umontreal.ca 20240617
 - major fixes (coordinnates, points selected by cluster id, distance from starting point and greatest tree (area)
 

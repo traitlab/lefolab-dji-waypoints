@@ -27,5 +27,8 @@ class Config(BaseModel):
     wpml_model_file_path: FilePath
     output_wpml_file_path: Path
 
+    kmz_base_name: str
+    kmz_root_file_path: Path
+
     class Config:
         arbitrary_types_allowed = True
