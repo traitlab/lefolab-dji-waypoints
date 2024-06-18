@@ -1,7 +1,6 @@
 from pathlib import Path
 
-import yaml
-from pydantic import BaseModel, FilePath, ValidationError
+from pydantic import BaseModel, FilePath
 
 
 class Config(BaseModel):

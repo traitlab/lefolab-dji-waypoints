@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.4.3 vincent.lefalher@umontreal.ca 20240618
+- create setup to be able to install it in a venv using pip
+
 0.4.2 vincent.lefalher@umontreal.ca 20240618
 - add create KMZ class
 

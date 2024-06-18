@@ -1,9 +1,5 @@
 pydantic
 pyyaml
-
 geopandas
-simplekml
 rasterio
-shapely
-lxml
 pyproj
