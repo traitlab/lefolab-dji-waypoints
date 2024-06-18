@@ -1,5 +1,6 @@
 pydantic
 pyyaml
+shapely
 geopandas
 rasterio
 pyproj

@@ -130,7 +130,6 @@ class ExtractPoints:
                 'dsm_file_name': config.dsm_file_path,
                 'epsg_code': self.epsg_code,
                 'geopackage_file': config.zone_of_interest_path,
-                'geopackage_layer': config.zone_of_interest_layer,
                 'starting_point_elevation_from_dsm': self.starting_point_elevation,
                 'starting_point_latitude': self.starting_point_transformed[0],
                 'starting_point_longitude': self.starting_point_transformed[1]
