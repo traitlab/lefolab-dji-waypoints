@@ -55,12 +55,11 @@ class BuildTemplateKML:
         self.aircraft_heading2 = '-51'
         self.aircraft_path_mode = 'counterClockwise'
         self.is_risky = '0'
-            # Define namespaces
+        # Define namespaces
         self.namespaces = {
             'kml': 'http://www.opengis.net/kml/2.2',
             'wpml': 'http://www.dji.com/wpmz/1.0.6'
         }
-
 
     def read_coordinates_from_csv(self, csv_file):
         coordinates = []
@@ -74,7 +73,8 @@ class BuildTemplateKML:
 
     def setup(self):
         # Read the coordinates from the CSV
-        self.coordinates = self.read_coordinates_from_csv(config.points_csv_file_path)
+        self.coordinates = self.read_coordinates_from_csv(
+            config.points_csv_file_path)
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -96,19 +96,22 @@ class BuildTemplateKML:
         for idx, (lat, lon) in enumerate(self.coordinates):
             placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
-            point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+            point = ET.SubElement(
+                placemark, f'{{{self.namespaces["kml"]}}}Point')
             coordinates_element = ET.SubElement(
                 point, f'{{{self.namespaces["kml"]}}}coordinates')
-            coordinates_element.text = f'{lon},{lat}'
+            coordinates_element.text = f'{lat},{lon}'
 
-            wpml_index = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}index')
+            wpml_index = ET.SubElement(
+                placemark, f'{{{self.namespaces["wpml"]}}}index')
             wpml_index.text = str(idx)
 
             wpml_ellipsoidHeight = ET.SubElement(
                 placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
             wpml_ellipsoidHeight.text = self.ellipsoid_height
 
-            wpml_height = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}height')
+            wpml_height = ET.SubElement(
+                placemark, f'{{{self.namespaces["wpml"]}}}height')
             wpml_height.text = self.height
 
             wpml_waypointSpeed = ET.SubElement(
@@ -263,7 +266,8 @@ class BuildTemplateKML:
                 wpml_actionActuatorFuncParam2, f'{{{self.namespaces["wpml"]}}}aircraftPathMode')
             wpml_aircraftPathMode.text = self.aircraft_path_mode
 
-            wpml_isRisky = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+            wpml_isRisky = ET.SubElement(
+                placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
             wpml_isRisky.text = self.is_risky
 
             self.folder.append(placemark)
@@ -273,10 +277,10 @@ class BuildTemplateKML:
         pretty_xml_str = self.beautify_xml()
 
         # Save the updated KML file
-        os.makedirs(os.path.dirname(config.output_kml_file_path), exist_ok=True)
+        os.makedirs(os.path.dirname(
+            config.output_kml_file_path), exist_ok=True)
         with open(config.output_kml_file_path, 'w', encoding='UTF-8') as file:
             file.write(pretty_xml_str)
-
 
     def beautify_xml(self):
 
@@ -290,7 +294,8 @@ class BuildTemplateKML:
         pretty_xml_str = dom.toprettyxml(indent="  ")
 
         # Remove empty lines
-        non_empty_lines = [line for line in pretty_xml_str.splitlines() if line.strip() != ""]
-        cleaned_pretty_xml_str = "\n".join(non_empty_lines)        
+        non_empty_lines = [
+            line for line in pretty_xml_str.splitlines() if line.strip() != ""]
+        cleaned_pretty_xml_str = "\n".join(non_empty_lines)
 
         return cleaned_pretty_xml_str

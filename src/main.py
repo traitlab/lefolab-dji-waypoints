@@ -3,6 +3,7 @@ from pydantic import ValidationError
 
 from lib.build_template_kml import BuildTemplateKML
 from lib.build_waylines_wpml import BuildWaylinesWPML
+from lib.config import config
 from lib.create_kmz import CreateKMZ
 from lib.extract_points import ExtractPoints
 
@@ -11,7 +12,7 @@ try:
     extract_points.load()
     extract_points.setup()
     extract_points.get_points_elevation_from_dsm()
-    extract_points.reproject("epsg:32618", "epsg:32618")
+    extract_points.reproject(config.from_epsg, config.to_epsg)
     extract_points.write_global_csv()
     extract_points.write_waypoint_csv()
 

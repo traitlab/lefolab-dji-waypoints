@@ -3,12 +3,12 @@ import os
 import xml.etree.ElementTree as ET
 from xml.dom.minidom import parseString
 
-
 from lib.config import config
+
 
 class BuildWaylinesWPML:
 
-    def __init__(self):    
+    def __init__(self):
         self.execute_height = '380.736267089844'
         self.waypoint_speed = '5'
         self.waypoint_heading_mode = 'fixed'
@@ -62,7 +62,6 @@ class BuildWaylinesWPML:
             'wpml': "http://www.dji.com/wpmz/1.0.6"
         }
 
-
     def read_coordinates_from_csv(self, csv_file):
         coordinates = []
         with open(csv_file, 'r') as file:
@@ -70,12 +69,14 @@ class BuildWaylinesWPML:
             for row in reader:
                 lat = row['latitude']
                 lon = row['longitude']
-                coordinates.append((lat, lon))
+                height_ellipsoidal = row['elevation_from_dsm']
+                coordinates.append((lat, lon, height_ellipsoidal))
         return coordinates
 
     def setup(self):
         # Read the coordinates from the CSV
-        self.coordinates = self.read_coordinates_from_csv(config.points_csv_file_path)
+        self.coordinates = self.read_coordinates_from_csv(
+            config.points_csv_file_path)
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -92,20 +93,22 @@ class BuildWaylinesWPML:
     def addNewPlacemark(self):
 
         # Create new Placemark elements based on the CSV coordinates
-        for index, (lat, lon) in enumerate(self.coordinates):
+        for index, (lat, lon, height_ellipsoidal) in enumerate(self.coordinates):
             placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
-            point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+            point = ET.SubElement(
+                placemark, f'{{{self.namespaces["kml"]}}}Point')
             coordinates_element = ET.SubElement(
                 point, f'{{{self.namespaces["kml"]}}}coordinates')
-            coordinates_element.text = f'{lon},{lat}'
+            coordinates_element.text = f'{lat},{lon}'
 
-            wpml_index = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}index')
+            wpml_index = ET.SubElement(
+                placemark, f'{{{self.namespaces["wpml"]}}}index')
             wpml_index.text = str(index)
 
             wpml_executeHeight = ET.SubElement(
                 placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-            wpml_executeHeight.text = self.execute_height
+            wpml_executeHeight.text = height_ellipsoidal
 
             wpml_waypointSpeed = ET.SubElement(
                 placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
@@ -259,7 +262,8 @@ class BuildWaylinesWPML:
                 wpml_waypointGimbalHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointGimbalYawAngle')
             wpml_waypointGimbalYawAngle.text = self.waypoint_gimbal_yaw_angle
 
-            wpml_isRisky = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+            wpml_isRisky = ET.SubElement(
+                placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
             wpml_isRisky.text = self.is_risky
 
             wpml_waypointWorkType = ET.SubElement(
@@ -268,16 +272,15 @@ class BuildWaylinesWPML:
 
             self.folder.append(placemark)
 
-    
     def saveNewWPML(self):
         # Reopen, beautify it, and save it
         pretty_xml_str = self.beautify_xml()
 
         # Save the updated KML file
-        os.makedirs(os.path.dirname(config.output_wpml_file_path), exist_ok=True)
+        os.makedirs(os.path.dirname(
+            config.output_wpml_file_path), exist_ok=True)
         with open(config.output_wpml_file_path, 'w', encoding='UTF-8') as file:
             file.write(pretty_xml_str)
-
 
     def beautify_xml(self):
 
@@ -291,7 +294,8 @@ class BuildWaylinesWPML:
         pretty_xml_str = dom.toprettyxml(indent="  ")
 
         # Remove empty lines
-        non_empty_lines = [line for line in pretty_xml_str.splitlines() if line.strip() != ""]
-        cleaned_pretty_xml_str = "\n".join(non_empty_lines)        
+        non_empty_lines = [
+            line for line in pretty_xml_str.splitlines() if line.strip() != ""]
+        cleaned_pretty_xml_str = "\n".join(non_empty_lines)
 
         return cleaned_pretty_xml_str

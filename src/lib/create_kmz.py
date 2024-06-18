@@ -11,7 +11,7 @@ class CreateKMZ:
         # Get current datetime
         current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")
         self.wpmz_dir = f"{config.kmz_root_file_path}/{config.kmz_base_name}/wpmz"
-        self.kmz_file_path = f"{config.kmz_root_file_path}//{config.kmz_base_name}/{config.kmz_base_name}_{current_datetime}.kmz"
+        self.kmz_file_path = f"{config.kmz_root_file_path}/{config.kmz_base_name}/{config.kmz_base_name}-{current_datetime}.kmz"
 
     def create_kmz(self):
 

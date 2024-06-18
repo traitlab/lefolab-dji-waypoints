@@ -9,6 +9,11 @@ class Config(BaseModel):
     zone_of_interest_path: FilePath
     dsm_file_path: FilePath
 
+    base_height_ortho: int
+
+    from_epsg: str
+    to_epsg: str
+
     global_csv_file_path: Path
     points_csv_file_path: Path
 
