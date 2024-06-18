@@ -18,7 +18,7 @@ try:
 
     build_template_kml = BuildTemplateKML()
     build_template_kml.setup()
-    build_template_kml.addNewPlacemark()
+    build_template_kml.generate()
     build_template_kml.saveNewKML()
 
     build_waylines_wpml = BuildWaylinesWPML()

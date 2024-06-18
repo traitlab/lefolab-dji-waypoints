@@ -24,7 +24,13 @@ Configuration file should be located under `/usr/local/etc/lefolab_drone_src/set
 Here is a configuration sample : 
 
 ```yaml
-num_waypoints_per_cluster: 5
+num_waypoints_per_cluster: 1
+base_height_orthometric: 331 # TODO Antoine la récupére sur le terrain 
+# <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
+# conversion GPSh NRCAN.GC.CA
+
+from_epsg: "epsg:32618"
+to_epsg: "epsg:4326"
 
 tree_polygons_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.gpkg'
 starting_point_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_starting_point.gpkg'

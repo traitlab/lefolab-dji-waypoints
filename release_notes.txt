@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.4.6 vincent.lefalher@umontreal.ca 20240618
+- add the template stop placemark
+
 0.4.5 vincent.lefalher@umontreal.ca 20240618
 - fix the project to WGS84 EPSG:4326, tested, working; 
 - fix lat long in Placemark coordinate

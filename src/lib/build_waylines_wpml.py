@@ -27,7 +27,7 @@ class BuildWaylinesWPML:
         self.action_trigger_type = 'reachPoint'
         self.action_id = '0'
         self.action_actuator_func = 'orientedShoot'
-        self.gimbal_pitch_rotate_angle = '-89.9000015258789'
+        self.gimbal_pitch_rotate_angle = '-90'
         self.gimbal_roll_rotate_angle = '0'
         self.gimbal_yaw_rotate_angle = '-52.6846771240234'
         self.focus_x = '0'
@@ -49,7 +49,7 @@ class BuildWaylinesWPML:
         self.oriented_file_path = '0c6f31bb-81bc-452d-904f-f15c5b92e330'
         self.oriented_file_md5 = ''
         self.oriented_file_size = '0'
-        self.oriented_file_suffix = 'Waypoint1'
+        # self.oriented_file_suffix = 'Waypoint1'
         self.oriented_photo_mode = 'normalPhoto'
         self.is_risky = '0'
         self.waypoint_work_type = '0'
@@ -70,7 +70,8 @@ class BuildWaylinesWPML:
                 lat = row['latitude']
                 lon = row['longitude']
                 height_ellipsoidal = row['elevation_from_dsm']
-                coordinates.append((lat, lon, height_ellipsoidal))
+                polygon_id = row['polygon_id']
+                coordinates.append((lat, lon, height_ellipsoidal, polygon_id))
         return coordinates
 
     def setup(self):
@@ -93,7 +94,7 @@ class BuildWaylinesWPML:
     def addNewPlacemark(self):
 
         # Create new Placemark elements based on the CSV coordinates
-        for index, (lat, lon, height_ellipsoidal) in enumerate(self.coordinates):
+        for index, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.coordinates):
             placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
             point = ET.SubElement(
@@ -248,7 +249,7 @@ class BuildWaylinesWPML:
             wpml_orientedFileSize.text = self.oriented_file_size
             wpml_orientedFileSuffix = ET.SubElement(
                 wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix')
-            wpml_orientedFileSuffix.text = self.oriented_file_suffix
+            wpml_orientedFileSuffix.text = polygon_id
             wpml_orientedPhotoMode = ET.SubElement(
                 wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedPhotoMode')
             wpml_orientedPhotoMode.text = self.oriented_photo_mode

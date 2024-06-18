@@ -78,6 +78,7 @@ class ExtractPoints:
         # self.trees_in_zone_gdf['area'] = self.trees_in_zone_gdf.area
         self.trees_in_zone_gdf['distance_to_start'] = self.trees_in_zone_gdf['centroid'].distance(
             self.starting_point)
+        self.trees_in_zone_gdf['polygon_id'] = self.trees_in_zone_gdf.index
 
         # Group trees by cluster_id
         self.clusters = self.trees_in_zone_gdf.groupby('cluster_id')
@@ -148,7 +149,7 @@ class ExtractPoints:
             for idx, ((lon, lat), elevation, row) in enumerate(zip(self.sorted_points_transformed, self.points_elevation, self.top_polygons_per_cluster.itertuples())):
                 points_writer.writerow({
                     'index': idx,
-                    'polygon_id': row.Index,  # or row.fid if it's available
+                    'polygon_id': row.polygon_id,
                     'cluster_id': row.cluster_id,
                     'distance_from_starting_point': row.distance_to_start,
                     'latitude': lat,
