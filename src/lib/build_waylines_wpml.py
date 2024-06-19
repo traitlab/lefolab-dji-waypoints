@@ -62,8 +62,8 @@ class BuildWaylinesWPML:
             'wpml': "http://www.dji.com/wpmz/1.0.6"
         }
 
-    def read_coordinates_from_csv(self, csv_file):
-        coordinates = []
+    def read_csv(self, csv_file):
+        properties = []
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
@@ -71,12 +71,12 @@ class BuildWaylinesWPML:
                 lon = row['longitude']
                 height_ellipsoidal = row['elevation_from_dsm']
                 polygon_id = row['polygon_id']
-                coordinates.append((lat, lon, height_ellipsoidal, polygon_id))
-        return coordinates
+                properties.append((lat, lon, height_ellipsoidal, polygon_id))
+        return properties
 
     def setup(self):
         # Read the coordinates from the CSV
-        self.coordinates = self.read_coordinates_from_csv(
+        self.csv_properties = self.read_csv(
             config.points_csv_file_path)
 
         # Register namespaces and parse the KML file
@@ -91,10 +91,21 @@ class BuildWaylinesWPML:
         for placemark in self.folder.findall('kml:Placemark', self.namespaces):
             self.folder.remove(placemark)
 
+    def generate(self):
+        # Add new Placemark elements for each coordinate
+        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
+            index = idx * 3
+            self.addPlacemarkStop(
+                index, lat, lon, height_ellipsoidal, polygon_id)
+            self.addPlacemarkActions(
+                index + 1, lat, lon, height_ellipsoidal, polygon_id)
+            self.addPlacemarkStop(
+                index + 2, lat, lon, height_ellipsoidal, polygon_id)
+
     def addNewPlacemark(self):
 
         # Create new Placemark elements based on the CSV coordinates
-        for index, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.coordinates):
+        for index, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
             placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
             point = ET.SubElement(
