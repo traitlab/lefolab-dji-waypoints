@@ -21,23 +21,25 @@ class BuildTemplateKML:
         # Variables for common values
         # self.ellipsoid_height = '380.736267089844' # read from the CSV
         self.height = str(config.base_height_orthometric)  # '413.501159667969'
-        self.waypoint_speed = '5'
-        self.waypoint_heading_mode = 'fixed'
-        self.waypoint_heading_angle = '-52'
-        self.waypoint_poi_point = '0.000000,0.000000,0.000000'
-        self.waypoint_heading_path_mode = 'followBadArc'
-        self.waypoint_heading_poi_index = '0'
+        # self.waypoint_speed = '5'
+        # self.waypoint_heading_mode = 'fixed'
+        # self.waypoint_heading_angle = '-52'
+        # self.waypoint_poi_point = '0.000000,0.000000,0.000000'
+        # self.waypoint_heading_path_mode = 'followBadArc'
+        # self.waypoint_heading_poi_index = '0'
         self.use_global_speed = '1'
         self.use_global_heading_param = '1'
         self.use_global_turn_param = '1'
         self.gimbal_pitch_angle = '-90'
         self.use_straight_line = '0'
+
         self.action_group_id = '0'
         self.action_group_start_index = '0'
         self.action_group_end_index = '0'
-        self.action_group_mode = 'sequence'
+        self.action_group_mode = 'sequence'        
         self.action_trigger_type = 'reachPoint'
-        self.action_id = '0'
+
+        # self.action_id = '0'
         self.action_actuator_func = 'orientedShoot'
         self.gimbal_pitch_rotate_angle = '-90'
         self.gimbal_roll_rotate_angle = '0'
@@ -46,26 +48,26 @@ class BuildTemplateKML:
         self.focus_y = '0'
         self.focus_region_width = '0'
         self.focus_region_height = '0'
-        self.focal_length = '24'
+        # self.focal_length = '24'
         self.aircraft_heading = '-52'
         self.accurate_frame_valid = '0'
         self.payload_position_index = '0'
         self.use_global_payload_lens_index = '0'
         self.target_angle = '0'
-        self.action_uuid = 'b67be2ca-9735-40bc-ab94-e9e01601e114'
+        # self.action_uuid = 'b67be2ca-9735-40bc-ab94-e9e01601e114'
         self.image_width = '0'
         self.image_height = '0'
         self.af_pos = '0'
         self.gimbal_port = '0'
         self.oriented_camera_type = '67'
-        self.oriented_file_path = '0c6f31bb-81bc-452d-904f-f15c5b92e330'
-        self.oriented_file_md5 = ''
+        # self.oriented_file_path = '0c6f31bb-81bc-452d-904f-f15c5b92e330'
+        # self.oriented_file_md5 = ''
         self.oriented_file_size = '0'
-        self.oriented_file_suffix = 'Waypoint1'
+        # self.oriented_file_suffix = 'Waypoint1'
         self.oriented_photo_mode = 'normalPhoto'
-        self.action_actuator_func2 = 'rotateYaw'
-        self.aircraft_heading2 = '-51'
-        self.aircraft_path_mode = 'counterClockwise'
+        # self.action_actuator_func2 = 'rotateYaw'
+        # self.aircraft_heading2 = '-51'
+        # self.aircraft_path_mode = 'counterClockwise'
         self.is_risky = '0'
         # Define namespaces
         self.namespaces = {
@@ -124,219 +126,130 @@ class BuildTemplateKML:
         coordinates_element = ET.SubElement(point, 'coordinates')
         coordinates_element.text = f'{lat},{lon}'
 
-        wpml_index = ET.SubElement(placemark, 'wpml:index')
+        wpml_index = ET.SubElement(placemark, '{{{self.namespaces["wpml"]}}}index')
         wpml_index.text = str(idx)
 
         wpml_ellipsoidHeight = ET.SubElement(
-            placemark, 'wpml:ellipsoidHeight')
+            placemark, '{{{self.namespaces["wpml"]}}}ellipsoidHeight')
         wpml_ellipsoidHeight.text = str(float(height_ellipsoidal) + 10)
 
-        wpml_height = ET.SubElement(placemark, 'wpml:height')
+        wpml_height = ET.SubElement(placemark, '{{{self.namespaces["wpml"]}}}height')
         wpml_height.text = str(config.base_height_orthometric + 10)
 
-        wpml_use_global_speed = ET.SubElement(placemark, 'wpml:useGlobalSpeed')
+        wpml_use_global_speed = ET.SubElement(placemark, '{{{self.namespaces["wpml"]}}}useGlobalSpeed')
         wpml_use_global_speed.text = self.stop_use_global_speed
 
         wpml_use_global_heading_param = ET.SubElement(
-            placemark, 'wpml:useGlobalHeadingParam')
+            placemark, '{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
         wpml_use_global_heading_param.text = self.stop_use_global_heading_param
 
         wpml_use_global_turn_param = ET.SubElement(
-            placemark, 'wpml:useGlobalTurnParam')
+            placemark, '{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_use_global_turn_param.text = self.stop_use_global_turn_param
 
         wpml_gimbal_pitch_angle = ET.SubElement(
-            placemark, 'wpml:gimbalPitchAngle')
+            placemark, '{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
         wpml_gimbal_pitch_angle.text = self.stop_gimbal_pitch_angle
 
         wpml_use_straight_line = ET.SubElement(
-            placemark, 'wpml:useStraightLine')
+            placemark, '{{{self.namespaces["wpml"]}}}useStraightLine')
         wpml_use_straight_line.text = self.stop_use_straight_line
 
-        wpml_is_risky = ET.SubElement(placemark, 'wpml:isRisky')
+        wpml_is_risky = ET.SubElement(placemark, '{{{self.namespaces["wpml"]}}}isRisky')
         wpml_is_risky.text = self.stop_is_risky
+
+        ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = polygon_id
 
         self.folder.append(placemark)
 
-    def addPlacemarkActions(self, idx, lat, lon, height_ellipsoidal, polygon_id):
+    def addPlacemarkActionGroup(self):
+        action_group = ET.Element(f'{{{self.namespaces["wpml"]}}}actionGroup')
+        ET.SubElement(action_group, f'{{{self.namespaces["wpml"]}}}actionGroupId').text = self.action_group_id
+        ET.SubElement(action_group, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex').text = self.action_group_start_index
+        ET.SubElement(action_group, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex').text = self.action_group_end_index
+        ET.SubElement(action_group, f'{{{self.namespaces["wpml"]}}}actionGroupMode').text = self.action_group_mode
+        
+        action_trigger = ET.SubElement(action_group, f'{{{self.namespaces["wpml"]}}}actionTrigger')
+        ET.SubElement(action_trigger, f'{{{self.namespaces["wpml"]}}}actionTriggerType').text = self.action_trigger_type
+        
+        return action_group
 
-        # Add new Placemark elements for each coordinate
-        # for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
+    def addPlacemarkAction(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
+        action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
+        ET.SubElement(action, f'{{{self.namespaces["wpml"]}}}actionId').text = idx
+        ET.SubElement(action, f'{{{self.namespaces["wpml"]}}}actionActuatorFunc').text = self.action_actuator_func
+        
+        action_actuator_func_param = ET.SubElement(action, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateAngle').text = self.gimbal_pitch_rotate_angle
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}gimbalRollRotateAngle').text = self.gimbal_roll_rotate_angle
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}gimbalYawRotateAngle').text = self.gimbal_yaw_rotate_angle
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}focusX').text = self.focus_x
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}focusY').text = self.focus_y
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}focusRegionWidth').text = self.focus_region_width
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}focusRegionHeight').text = self.focus_region_height
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}focalLength').text = focalLength
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}aircraftHeading').text = self.aircraft_heading
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}accurateFrameValid').text = self.accurate_frame_valid
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}payloadPositionIndex').text = self.payload_position_index
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}useGlobalPayloadLensIndex').text = self.use_global_payload_lens_index
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}targetAngle').text = self.target_angle
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}actionUUID').text = actionUUID
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}imageWidth').text = self.image_width
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}imageHeight').text = self.image_height
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}AFPos').text = self.af_pos
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}gimbalPort').text = self.gimbal_port
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}orientedCameraType').text = self.oriented_camera_type
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}orientedFilePath').text = orientedFilePath
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}orientedFileMD5')
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}orientedFileSize').text = self.oriented_file_size
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = orientedFileSuffix
+        ET.SubElement(action_actuator_func_param, f'{{{self.namespaces["wpml"]}}}orientedPhotoMode').text = self.oriented_photo_mode
+
+        return action
+
+    def addPlacemarkActions(self, idx, lat, lon, height_ellipsoidal, polygon_id):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
-        point = ET.SubElement(
-            placemark, f'{{{self.namespaces["kml"]}}}Point')
-        coordinates_element = ET.SubElement(
-            point, f'{{{self.namespaces["kml"]}}}coordinates')
+        point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+        coordinates_element = ET.SubElement(point, f'{{{self.namespaces["kml"]}}}coordinates')
         coordinates_element.text = f'{lat},{lon}'
 
-        wpml_index = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}index')
+        wpml_index = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}index')
         wpml_index.text = str(idx)
 
-        wpml_ellipsoidHeight = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
+        wpml_ellipsoidHeight = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
         wpml_ellipsoidHeight.text = height_ellipsoidal
 
-        wpml_height = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}height')
+        wpml_height = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}height')
         wpml_height.text = self.height
 
-        wpml_waypointSpeed = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
-        wpml_waypointSpeed.text = self.waypoint_speed
+        wpml_useGlobalSpeed = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
+        wpml_useGlobalSpeed.text = self.use_global_speed
 
-        wpml_waypointHeadingParam = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}waypointHeadingParam')
-        wpml_waypointHeadingMode = ET.SubElement(
-            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingMode')
-        wpml_waypointHeadingMode.text = self.waypoint_heading_mode
-        wpml_waypointHeadingAngle = ET.SubElement(
-            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngle')
-        wpml_waypointHeadingAngle.text = self.waypoint_heading_angle
-        wpml_waypointPoiPoint = ET.SubElement(
-            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointPoiPoint')
-        wpml_waypointPoiPoint.text = self.waypoint_poi_point
-        wpml_waypointHeadingPathMode = ET.SubElement(
-            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPathMode')
-        wpml_waypointHeadingPathMode.text = self.waypoint_heading_path_mode
-        wpml_waypointHeadingPoiIndex = ET.SubElement(
-            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPoiIndex')
-        wpml_waypointHeadingPoiIndex.text = self.waypoint_heading_poi_index
+        wpml_useGlobalHeadingParam = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
+        wpml_useGlobalHeadingParam.text = self.use_global_heading_param
 
-        wpml_useGlobalTurnParam = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
+        wpml_useGlobalTurnParam = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_useGlobalTurnParam.text = self.use_global_turn_param
 
-        wpml_useStraightLine = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_gimbalPitchAngle = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
+        wpml_gimbalPitchAngle.text = self.gimbal_pitch_angle
+
+        wpml_useStraightLine = ET.SubElement(placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
         wpml_useStraightLine.text = self.use_straight_line
-
-        wpml_actionGroup = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}actionGroup')
-        wpml_actionGroupId = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}actionGroupId')
-        wpml_actionGroupId.text = self.action_group_id
-        wpml_actionGroupStartIndex = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex')
-        wpml_actionGroupStartIndex.text = self.action_group_start_index
-        wpml_actionGroupEndIndex = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex')
-        wpml_actionGroupEndIndex.text = self.action_group_end_index
-        wpml_actionGroupMode = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}actionGroupMode')
-        wpml_actionGroupMode.text = self.action_group_mode
-
-        wpml_actionTrigger = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}actionTrigger')
-        wpml_actionTriggerType = ET.SubElement(
-            wpml_actionTrigger, f'{{{self.namespaces["wpml"]}}}actionTriggerType')
-        wpml_actionTriggerType.text = self.action_trigger_type
-
-        wpml_action = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}action')
-        wpml_actionId = ET.SubElement(
-            wpml_action, f'{{{self.namespaces["wpml"]}}}actionId')
-        wpml_actionId.text = self.action_id
-        wpml_actionActuatorFunc = ET.SubElement(
-            wpml_action, f'{{{self.namespaces["wpml"]}}}actionActuatorFunc')
-        wpml_actionActuatorFunc.text = self.action_actuator_func
-
-        wpml_actionActuatorFuncParam = ET.SubElement(
-            wpml_action, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
-        wpml_gimbalPitchRotateAngle = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateAngle')
-        wpml_gimbalPitchRotateAngle.text = self.gimbal_pitch_rotate_angle
-        wpml_gimbalRollRotateAngle = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}gimbalRollRotateAngle')
-        wpml_gimbalRollRotateAngle.text = self.gimbal_roll_rotate_angle
-        wpml_gimbalYawRotateAngle = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}gimbalYawRotateAngle')
-        wpml_gimbalYawRotateAngle.text = self.gimbal_yaw_rotate_angle
-        wpml_focusX = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}focusX')
-        wpml_focusX.text = self.focus_x
-        wpml_focusY = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}focusY')
-        wpml_focusY.text = self.focus_y
-        wpml_focusRegionWidth = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}focusRegionWidth')
-        wpml_focusRegionWidth.text = self.focus_region_width
-        wpml_focusRegionHeight = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}focusRegionHeight')
-        wpml_focusRegionHeight.text = self.focus_region_height
-        wpml_focalLength = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}focalLength')
-        wpml_focalLength.text = self.focal_length
-        wpml_aircraftHeading = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}aircraftHeading')
-        wpml_aircraftHeading.text = self.aircraft_heading
-        wpml_accurateFrameValid = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}accurateFrameValid')
-        wpml_accurateFrameValid.text = self.accurate_frame_valid
-        wpml_payloadPositionIndex = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}payloadPositionIndex')
-        wpml_payloadPositionIndex.text = self.payload_position_index
-        wpml_useGlobalPayloadLensIndex = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}useGlobalPayloadLensIndex')
-        wpml_useGlobalPayloadLensIndex.text = self.use_global_payload_lens_index
-        wpml_targetAngle = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}targetAngle')
-        wpml_targetAngle.text = self.target_angle
-        wpml_actionUUID = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}actionUUID')
-        wpml_actionUUID.text = self.action_uuid
-        wpml_imageWidth = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}imageWidth')
-        wpml_imageWidth.text = self.image_width
-        wpml_imageHeight = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}imageHeight')
-        wpml_imageHeight.text = self.image_height
-        wpml_AFPos = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}AFPos')
-        wpml_AFPos.text = self.af_pos
-        wpml_gimbalPort = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}gimbalPort')
-        wpml_gimbalPort.text = self.gimbal_port
-        wpml_orientedCameraType = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedCameraType')
-        wpml_orientedCameraType.text = self.oriented_camera_type
-        wpml_orientedFilePath = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedFilePath')
-        wpml_orientedFilePath.text = self.oriented_file_path
-        wpml_orientedFileMD5 = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedFileMD5')
-        wpml_orientedFileSize = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedFileSize')
-        wpml_orientedFileSize.text = self.oriented_file_size
-        wpml_orientedFileSuffix = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix')
-        wpml_orientedFileSuffix.text = polygon_id
-        wpml_orientedPhotoMode = ET.SubElement(
-            wpml_actionActuatorFuncParam, f'{{{self.namespaces["wpml"]}}}orientedPhotoMode')
-        wpml_orientedPhotoMode.text = self.oriented_photo_mode
-
-        wpml_action2 = ET.SubElement(
-            wpml_actionGroup, f'{{{self.namespaces["wpml"]}}}action')
-        wpml_actionId2 = ET.SubElement(
-            wpml_action2, f'{{{self.namespaces["wpml"]}}}actionId')
-        wpml_actionId2.text = self.action_id
-        wpml_actionActuatorFunc2 = ET.SubElement(
-            wpml_action2, f'{{{self.namespaces["wpml"]}}}actionActuatorFunc')
-        wpml_actionActuatorFunc2.text = self.action_actuator_func2
-
-        wpml_actionActuatorFuncParam2 = ET.SubElement(
-            wpml_action2, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
-        wpml_aircraftHeading2 = ET.SubElement(
-            wpml_actionActuatorFuncParam2, f'{{{self.namespaces["wpml"]}}}aircraftHeading')
-        wpml_aircraftHeading2.text = self.aircraft_heading2
-        wpml_aircraftPathMode = ET.SubElement(
-            wpml_actionActuatorFuncParam2, f'{{{self.namespaces["wpml"]}}}aircraftPathMode')
-        wpml_aircraftPathMode.text = self.aircraft_path_mode
 
         wpml_isRisky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
         wpml_isRisky.text = self.is_risky
+
+        wpml_actionGroup = self.addPlacemarkActionGroup()
+        placemark.append(wpml_actionGroup)
+
+        wpml_action = self.addPlacemarkAction('0', '24', str(polygon_id), '51ae7825-56de-41d3-90bb-3c9ed6de7960', '393e34ba-016e-4fd3-98bf-3f9fe0c517df')
+        wpml_actionGroup.append(wpml_action)
+
+        wpml_action = self.addPlacemarkAction('1', '168', str(polygon_id) + "_zoom", '703556e4-81fb-4294-b607-05d5f748377f', '703556e4-81fb-4294-b607-05d5f748377f')
+        wpml_actionGroup.append(wpml_action)
 
         self.folder.append(placemark)
 

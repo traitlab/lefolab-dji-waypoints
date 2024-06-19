@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.4.7 vincent.lefalher@umontreal.ca 20240618
+- refactor generation of template.kml
+
 0.4.6 vincent.lefalher@umontreal.ca 20240618
 - add the template stop placemark
 
