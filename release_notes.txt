@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.4.8 vincent.lefalher@umontreal.ca 20240619
+- use the num_waypoints_per_cluster
+
 0.4.7 vincent.lefalher@umontreal.ca 20240618
 - refactor generation of template.kml
 

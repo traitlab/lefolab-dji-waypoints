@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="lefolab-drone-src",
-    version="0.4.7",
+    version="0.4.8",
     py_modules=['lefolab_drone_src'],
     author="Vincent Le Falher",
     author_email="vincent.lefalher@umontreal.ca",

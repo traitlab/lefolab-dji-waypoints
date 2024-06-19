@@ -65,8 +65,9 @@ class ExtractPoints:
         # Sort polygons by distance to the starting point
         sorted_polygons = group.sort_values(by='distance_to_start')
 
-        # Select the 5 polygons with the greatest area among the closest ones
-        top_polygons = sorted_polygons.nlargest(5, 'Shape_Area')
+        # Select the top polygons with the greatest area among the closest ones
+        top_polygons = sorted_polygons.nlargest(
+            config.num_waypoints_per_cluster, 'Shape_Area')
 
         return top_polygons
 
@@ -90,7 +91,7 @@ class ExtractPoints:
         # Reset index
         self.top_polygons_per_cluster.reset_index(drop=True, inplace=True)
 
-        # # Sort each group by area attribute and select top 5 polygons
+        # # Sort each group by area attribute and select top polygons
         # self.top_polygons_per_cluster = self.clusters.apply(
         #     lambda x: x.nlargest(5, 'area')).reset_index(drop=True)
 
