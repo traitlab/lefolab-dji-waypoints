@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.5.1 vincent.lefalher@umontreal.ca 20240619
+- produce waylines.wpml; tested compared working
+
 0.4.9 vincent.lefalher@umontreal.ca 20240619
 - bug fix; start refactoring waylines
 

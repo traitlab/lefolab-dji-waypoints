@@ -23,7 +23,7 @@ try:
 
     build_waylines_wpml = BuildWaylinesWPML()
     build_waylines_wpml.setup()
-    build_waylines_wpml.addNewPlacemark()
+    build_waylines_wpml.generate()
     build_waylines_wpml.saveNewWPML()
 
     create_kmz = CreateKMZ()
