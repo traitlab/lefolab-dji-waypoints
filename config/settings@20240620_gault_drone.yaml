@@ -4,11 +4,13 @@ flight_height: 460
 # conversion GPSh NRCAN.GC.CA
 point_dsm_height_buffer: 10
 
+takeoff_point_wgs84_global_laty_lonx: "45.535075, -73.149231"
+takeoff_point_file_path: "/mnt/c/Users/vincent.le.falher/Downloads/20240620_gault_drone/20240620_gault_drone_takeoff_point.gpkg"
+
 from_epsg: "epsg:32618"
 to_epsg: "epsg:4326"
 
 tree_polygons_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/20240620_gault_drone/polygones_zoom_arbres_bidon.gpkg'
-starting_point_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/20240620_gault_drone/20240620_gault_drone_starting_point_single_layer.gpkg'
 zone_of_interest_path: '/mnt/c/Users/vincent.le.falher/Downloads/20240620_gault_drone/20240620_gault_drone_zone_interet.gpkg'
 dsm_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/20240620_gault_drone/20240620_gault_drone_dsm.tif'
 

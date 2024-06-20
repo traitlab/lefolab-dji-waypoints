@@ -1,6 +1,10 @@
 Issues
 - No know issues
 
+0.6.2 vincent.lefalher@umontreal.ca 20240620
+- rename starting_point by takeoff_point
+- generate takeoff_point from WGS 84 point in config
+
 0.6.1 vincent.lefalher@umontreal.ca 20240620
 - major fixes with latitude and longitude in CSV and template and waylines
 - implement shortest_path
