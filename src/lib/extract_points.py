@@ -1,5 +1,5 @@
 import csv
-
+import numpy as np
 import geopandas as gpd
 import rasterio
 from pyproj import Transformer
@@ -22,6 +22,7 @@ class ExtractPoints:
         self.starting_point_elevation = None
         self.sorted_points_transformed = None
         self.starting_point_transformed = None
+        self.highest_elevation = 0
 
     # Function to read zone of interest GeoDataFrame
     def read_zone_of_interest_gdf(self):
@@ -52,6 +53,9 @@ class ExtractPoints:
     @staticmethod
     def calculate_distance(point1, point2):
         return point1.distance(point2)
+
+    def get_highest_point_from_DSM(self):
+        self.highest_elevation = np.max(self.dsm_dataset.read(1)) # Read the first band
 
     # Function to get elevation from DSM
     @staticmethod
@@ -98,13 +102,15 @@ class ExtractPoints:
         # Extract EPSG code
         self.epsg_code = self.trees_in_zone_gdf.crs.to_epsg()
 
+        self.get_highest_point_from_DSM()
+
     def get_points_elevation_from_dsm(self):
         self.points_elevation = []
         # Iterate over each cluster
         for _, cluster_polygons in self.top_polygons_per_cluster.groupby('cluster_id'):
             # Extract elevations for polygons in the cluster
             cluster_elevations = [self.get_elevation_from_dsm(
-                point, self.dsm_dataset) + 10 for point in cluster_polygons['centroid']]
+                point, self.dsm_dataset) for point in cluster_polygons['centroid']]
             self.points_elevation.extend(cluster_elevations)
 
         # Calculate elevation of the starting point once
@@ -122,8 +128,8 @@ class ExtractPoints:
     def write_global_csv(self):
         # Write global values to CSV
         with open(config.global_csv_file_path, 'w', newline='') as global_csvfile:
-            global_fieldnames = ['dsm_file_name', 'epsg_code', 'geopackage_file', 'geopackage_layer',
-                                 'starting_point_elevation_from_dsm', 'starting_point_latitude', 'starting_point_longitude']
+            global_fieldnames = ['dsm_file_name', 'epsg_code', 'geopackage_file', 
+                                 'starting_point_elevation_from_dsm', 'starting_point_lon_x', 'starting_point_lat_y', 'highest_elevation_from_dsm']
             global_writer = csv.DictWriter(
                 global_csvfile, fieldnames=global_fieldnames)
 
@@ -133,27 +139,28 @@ class ExtractPoints:
                 'epsg_code': self.epsg_code,
                 'geopackage_file': config.zone_of_interest_path,
                 'starting_point_elevation_from_dsm': self.starting_point_elevation,
-                'starting_point_latitude': self.starting_point_transformed[0],
-                'starting_point_longitude': self.starting_point_transformed[1]
+                'starting_point_lon_x': self.starting_point_transformed[1],
+                'starting_point_lat_y': self.starting_point_transformed[0],
+                'highest_elevation_from_dsm': self.highest_elevation
             })
 
     def write_waypoint_csv(self):
         # Write waypoints to CSV
         with open(config.points_csv_file_path, 'w', newline='') as points_csvfile:
             points_fieldnames = ['index', 'polygon_id', 'cluster_id',
-                                 'distance_from_starting_point', 'latitude', 'longitude', 'elevation_from_dsm']
+                                 'distance_from_starting_point', 'lon_x', 'lat_y', 'elevation_from_dsm']
             points_writer = csv.DictWriter(
                 points_csvfile, fieldnames=points_fieldnames)
 
             points_writer.writeheader()
 
-            for idx, ((lon, lat), elevation, row) in enumerate(zip(self.sorted_points_transformed, self.points_elevation, self.top_polygons_per_cluster.itertuples())):
+            for idx, ((lat, lon), elevation, row) in enumerate(zip(self.sorted_points_transformed, self.points_elevation, self.top_polygons_per_cluster.itertuples())):
                 points_writer.writerow({
                     'index': idx,
                     'polygon_id': row.polygon_id,
                     'cluster_id': row.cluster_id,
                     'distance_from_starting_point': row.distance_to_start,
-                    'latitude': lat,
-                    'longitude': lon,
+                    'lon_x': lon,
+                    'lat_y': lat,
                     'elevation_from_dsm': elevation
                 })

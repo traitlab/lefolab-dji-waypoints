@@ -9,13 +9,15 @@ class Config(BaseModel):
     zone_of_interest_path: FilePath
     dsm_file_path: FilePath
 
-    base_height_orthometric: int
+    flight_height: int
+    point_dsm_height_buffer: int
 
     from_epsg: str
     to_epsg: str
 
     global_csv_file_path: Path
     points_csv_file_path: Path
+    shortest_path_csv_file_path: Path
 
     num_waypoints_per_cluster: int
 
@@ -27,6 +29,7 @@ class Config(BaseModel):
 
     kmz_base_name: str
     kmz_root_file_path: Path
+
 
     class Config:
         arbitrary_types_allowed = True

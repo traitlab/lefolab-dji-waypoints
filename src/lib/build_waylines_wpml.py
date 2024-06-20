@@ -21,8 +21,8 @@ class BuildWaylinesWPML:
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                lat = row['latitude']
-                lon = row['longitude']
+                lon = row['lon_x']
+                lat = row['lat_y']
                 height_ellipsoidal = row['elevation_from_dsm']
                 polygon_id = row['polygon_id']
                 properties.append((lat, lon, height_ellipsoidal, polygon_id))
@@ -31,7 +31,7 @@ class BuildWaylinesWPML:
     def setup(self):
         # Read the coordinates from the CSV
         self.csv_properties = self.read_csv(
-            config.points_csv_file_path)
+            config.shortest_path_csv_file_path)
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -62,7 +62,7 @@ class BuildWaylinesWPML:
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
         coordinates_element = ET.SubElement(
             point, f'{{{self.namespaces["kml"]}}}coordinates')
-        coordinates_element.text = f'{lat},{lon}'
+        coordinates_element.text = f'{lon},{lat}'
 
         wpml_index = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}index')
@@ -70,7 +70,7 @@ class BuildWaylinesWPML:
 
         wpml_execute_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-        wpml_execute_height.text = str(float(height_ellipsoidal) + 20)
+        wpml_execute_height.text = str(float(config.flight_height))
 
         # Load properties from JSON file
         with open('./config/waylines_placemark_no_action.json') as json_file:
@@ -148,7 +148,7 @@ class BuildWaylinesWPML:
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
         coordinates_element = ET.SubElement(
             point, f'{{{self.namespaces["kml"]}}}coordinates')
-        coordinates_element.text = f'{lat},{lon}'
+        coordinates_element.text = f'{lon},{lat}'
 
         wpml_index = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}index')
@@ -156,7 +156,7 @@ class BuildWaylinesWPML:
 
         wpml_execute_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-        wpml_execute_height.text = str(float(height_ellipsoidal) + 10)
+        wpml_execute_height.text = str(float(height_ellipsoidal) + config.point_dsm_height_buffer)
 
         # Load properties from JSON file
         with open('./config/waylines_placemark_with_actions.json') as json_file:

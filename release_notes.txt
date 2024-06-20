@@ -1,6 +1,11 @@
 Issues
 - No know issues
 
+0.6.1 vincent.lefalher@umontreal.ca 20240620
+- major fixes with latitude and longitude in CSV and template and waylines
+- implement shortest_path
+- tested template.kml and waypoints.csv in QGIS
+
 0.5.1 vincent.lefalher@umontreal.ca 20240619
 - produce waylines.wpml; tested compared working
 
