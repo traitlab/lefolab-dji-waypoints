@@ -1,7 +1,8 @@
-num_waypoints_per_cluster: 1
-base_height_orthometric: 331 # TODO Antoine la récupére sur le terrain 
+num_waypoints_per_cluster: 50
+flight_height: 460
 # <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
 # conversion GPSh NRCAN.GC.CA
+point_dsm_height_buffer: 10
 
 from_epsg: "epsg:32618"
 to_epsg: "epsg:4326"
@@ -13,6 +14,7 @@ dsm_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sb
 
 global_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_global_values.csv'
 points_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints.csv'
+shortest_path_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
 
 kml_model_file_path: './scripts/wpml/model/example-mission-m3t-kmz/wpmz/template.kml'
 output_kml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
