@@ -132,7 +132,7 @@ class BuildWaylinesWPML:
                 action_child_elem = ET.SubElement(action_elem, f'wpml:{key}')
                 action_child_elem.text = value
 
-    def addPlacemarkActionGroup(self, action_group, polygon_id):
+    def addPlacemarkActionGroup(self, idx, action_group, polygon_id):
         action_group_elem = ET.Element(
             f'{{{self.namespaces["wpml"]}}}actionGroup')
         for key, value in action_group.items():
@@ -140,6 +140,14 @@ class BuildWaylinesWPML:
                 for action in value:
                     self.addPlacemarkAction(
                         action_group_elem, action, polygon_id)
+            elif key == 'actionGroupStartIndex':
+                actionGroupStartIndex = ET.SubElement(
+                    action_group_elem, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex')
+                actionGroupStartIndex.text = str(idx)
+            elif key == 'actionGroupEndIndex':
+                actionGroupEndIndex = ET.SubElement(
+                    action_group_elem, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex')
+                actionGroupEndIndex.text = str(idx)
             else:
                 self.addProperty(action_group_elem, key, value)
                 # action_group_child_elem = ET.SubElement(
@@ -174,8 +182,8 @@ class BuildWaylinesWPML:
                 continue
             if key == 'actionGroups':
                 for action_group in value:
-                    action_group_elem = self.addPlacemarkActionGroup(
-                        action_group, polygon_id)
+                    action_group_elem = self.addPlacemarkActionGroup(idx,
+                                                                     action_group, polygon_id)
                     placemark.append(action_group_elem)
             else:
                 child_elem = ET.SubElement(

@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.6.4 vincent.lefalher@umontreal.ca 20240620
+- fix actionGroupStartIndex and actionGroupEndIndex
+
 0.6.3 vincent.lefalher@umontreal.ca 20240620
 - removes the last point from the CSV shortest_path
 - num_waypoints_per_cluster netween 2 and 21845
