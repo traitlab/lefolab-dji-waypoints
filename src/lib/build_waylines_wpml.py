@@ -26,6 +26,11 @@ class BuildWaylinesWPML:
                 height_ellipsoidal = row['elevation_from_dsm']
                 polygon_id = row['polygon_id']
                 properties.append((lat, lon, height_ellipsoidal, polygon_id))
+
+        # Check if the first and last points are the same and remove the last point if they are
+        if len(properties) > 1 and properties[0] == properties[-1]:
+            properties.pop()
+
         return properties
 
     def setup(self):
@@ -156,7 +161,8 @@ class BuildWaylinesWPML:
 
         wpml_execute_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-        wpml_execute_height.text = str(float(height_ellipsoidal) + config.point_dsm_height_buffer)
+        wpml_execute_height.text = str(
+            float(height_ellipsoidal) + config.point_dsm_height_buffer)
 
         # Load properties from JSON file
         with open('./config/waylines_placemark_with_actions.json') as json_file:

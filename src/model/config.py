@@ -1,11 +1,13 @@
 import re
 from pathlib import Path
 
-from pydantic import BaseModel, FilePath, field_validator
+from pydantic import BaseModel, Field, FilePath, field_validator
+from typing_extensions import Annotated
 
 
 class Config(BaseModel):
-    num_waypoints_per_cluster: int
+    num_waypoints_per_cluster: Annotated[int,
+                                         Field(strict=True, ge=2, le=21845)]
     flight_height: int
     point_dsm_height_buffer: int
 
