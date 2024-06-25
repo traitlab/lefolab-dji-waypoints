@@ -174,14 +174,14 @@ class BuildTemplateKML:
 
         self.folder.append(placemark)
 
-    def addPlacemarkActionGroup(self):
+    def addPlacemarkActionGroup(self, index):
         action_group = ET.Element(f'{{{self.namespaces["wpml"]}}}actionGroup')
         ET.SubElement(
             action_group, f'{{{self.namespaces["wpml"]}}}actionGroupId').text = self.action_group_id
         ET.SubElement(
-            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex').text = self.action_group_start_index
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex').text = str(index)
         ET.SubElement(
-            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex').text = self.action_group_end_index
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex').text = str(index)
         ET.SubElement(
             action_group, f'{{{self.namespaces["wpml"]}}}actionGroupMode').text = self.action_group_mode
 
@@ -297,7 +297,7 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
         wpml_isRisky.text = self.is_risky
 
-        wpml_actionGroup = self.addPlacemarkActionGroup()
+        wpml_actionGroup = self.addPlacemarkActionGroup(idx)
         placemark.append(wpml_actionGroup)
 
         wpml_action = self.addPlacemarkAction('0', '24', str(
