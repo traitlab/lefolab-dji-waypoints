@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.6.6 vincent.lefalher@umontreal.ca 20240625
+- clip the DSM from the zone of interest and extract the max value (max height)
+
 0.6.5 vincent.lefalher@umontreal.ca 20240625
 - fix actionGroupStartIndex and actionGroupEndIndex in the KML this time
 

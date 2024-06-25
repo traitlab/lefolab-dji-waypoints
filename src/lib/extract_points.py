@@ -3,6 +3,7 @@ import csv
 import geopandas as gpd
 import numpy as np
 import rasterio
+import rasterio.mask
 from pyproj import Transformer
 
 from lib.config import config
@@ -15,6 +16,8 @@ class ExtractPoints:
         self.takeoff_point_gdf = None
         self.trees_gdf = None
         self.trees_in_zone_gdf = None
+        self.dsm = None
+        self.clipped_dsm = None
         self.clusters = None
         self.top_polygons_per_cluster = None
         self.epsg_code = None
@@ -54,17 +57,29 @@ class ExtractPoints:
         except Exception:
             self.trees_in_zone_gdf = self.trees_gdf
 
-        # Load the DSM raster data
-        self.dsm_dataset = rasterio.open(config.dsm_file_path)
+         # Load the DSM raster data
+        self.dsm = rasterio.open(config.dsm_file_path)
+
+        self.get_DSM_within_zone_of_insterest()
 
     # Function to calculate distance between two points
     @staticmethod
     def calculate_distance(point1, point2):
         return point1.distance(point2)
 
+    def get_DSM_within_zone_of_insterest(self):
+        # Convert the ZOI geometry to GeoJSON format
+        zoi_geom = [geom for geom in self.zone_of_interest_gdf.geometry]
+
+        # Clip the DSM raster using the ZOI geometry
+        out_image, _ = rasterio.mask.mask(self.dsm, zoi_geom, crop=True)
+
+        # # Extract the first band from the clipped raster
+        self.clipped_dsm = out_image[0]
+
     def get_highest_point_from_DSM(self):
         self.highest_elevation = np.max(
-            self.dsm_dataset.read(1))  # Read the first band
+            self.clipped_dsm)  # Read the first band
 
     # Function to get elevation from DSM
     @staticmethod
@@ -119,12 +134,12 @@ class ExtractPoints:
         for _, cluster_polygons in self.top_polygons_per_cluster.groupby('cluster_id'):
             # Extract elevations for polygons in the cluster
             cluster_elevations = [self.get_elevation_from_dsm(
-                point, self.dsm_dataset) for point in cluster_polygons['centroid']]
+                point, self.dsm) for point in cluster_polygons['centroid']]
             self.points_elevation.extend(cluster_elevations)
 
         # Calculate elevation of the starting point once
         self.takeoff_point_elevation = self.get_elevation_from_dsm(
-            self.takeoff_point, self.dsm_dataset)
+            self.takeoff_point, self.dsm)
 
     def reproject(self, epsg_from, epsg_to):
         # Transform coordinates
@@ -138,7 +153,7 @@ class ExtractPoints:
         # Write global values to CSV
         with open(config.global_csv_file_path, 'w', newline='') as global_csvfile:
             global_fieldnames = ['dsm_file_name', 'epsg_code', 'geopackage_file',
-                                 'takeoff_point_elevation_from_dsm', 'takeoff_point_lon_x', 'takeoff_point_lat_y', 'highest_elevation_from_dsm']
+                                 'takeoff_point_elevation_from_dsm', 'takeoff_point_lon_x', 'takeoff_point_lat_y', 'highest_elevation']
             global_writer = csv.DictWriter(
                 global_csvfile, fieldnames=global_fieldnames)
 
@@ -150,7 +165,7 @@ class ExtractPoints:
                 'takeoff_point_elevation_from_dsm': self.takeoff_point_elevation,
                 'takeoff_point_lon_x': self.takeoff_point_transformed[1],
                 'takeoff_point_lat_y': self.takeoff_point_transformed[0],
-                'highest_elevation_from_dsm': self.highest_elevation
+                'highest_elevation': self.highest_elevation
             })
 
     def write_waypoint_csv(self):
