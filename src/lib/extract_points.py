@@ -107,7 +107,8 @@ class ExtractPoints:
         # self.trees_in_zone_gdf['area'] = self.trees_in_zone_gdf.area
         self.trees_in_zone_gdf['distance_to_start'] = self.trees_in_zone_gdf['centroid'].distance(
             self.takeoff_point)
-        self.trees_in_zone_gdf['polygon_id'] = self.trees_in_zone_gdf.index
+        self.trees_in_zone_gdf['polygon_id'] = self.trees_in_zone_gdf[[
+            'polygon_id']]
 
         # Group trees by cluster_id
         self.clusters = self.trees_in_zone_gdf.groupby('cluster_id')

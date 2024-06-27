@@ -10,10 +10,10 @@
       <wpml:globalTransitionalSpeed>15</wpml:globalTransitionalSpeed>
       <wpml:droneInfo>
         <wpml:droneEnumValue>77</wpml:droneEnumValue>
-        <wpml:droneSubEnumValue>1</wpml:droneSubEnumValue>
+        <wpml:droneSubEnumValue>0</wpml:droneSubEnumValue>
       </wpml:droneInfo>
       <wpml:payloadInfo>
-        <wpml:payloadEnumValue>67</wpml:payloadEnumValue>
+        <wpml:payloadEnumValue>66</wpml:payloadEnumValue>
         <wpml:payloadSubEnumValue>0</wpml:payloadSubEnumValue>
         <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
       </wpml:payloadInfo>

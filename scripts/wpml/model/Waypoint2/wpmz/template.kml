@@ -13,10 +13,10 @@
       <wpml:globalTransitionalSpeed>15</wpml:globalTransitionalSpeed>
       <wpml:droneInfo>
         <wpml:droneEnumValue>77</wpml:droneEnumValue>
-        <wpml:droneSubEnumValue>1</wpml:droneSubEnumValue>
+        <wpml:droneSubEnumValue>0</wpml:droneSubEnumValue>
       </wpml:droneInfo>
       <wpml:payloadInfo>
-        <wpml:payloadEnumValue>67</wpml:payloadEnumValue>
+        <wpml:payloadEnumValue>66</wpml:payloadEnumValue>
         <wpml:payloadSubEnumValue>0</wpml:payloadSubEnumValue>
         <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
       </wpml:payloadInfo>
@@ -26,7 +26,7 @@
       <wpml:templateId>0</wpml:templateId>
       <wpml:waylineCoordinateSysParam>
         <wpml:coordinateMode>WGS84</wpml:coordinateMode>
-        <wpml:heightMode>EGM96</wpml:heightMode>
+        <wpml:heightMode>relativeToStartPoint</wpml:heightMode>
         <wpml:positioningType>RTKBaseStation</wpml:positioningType>
       </wpml:waylineCoordinateSysParam>
       <wpml:autoFlightSpeed>5</wpml:autoFlightSpeed>
@@ -92,7 +92,7 @@
               <wpml:gimbalPort>0</wpml:gimbalPort>
               <wpml:orientedCameraType>67</wpml:orientedCameraType>
               <wpml:orientedFilePath>0c6f31bb-81bc-452d-904f-f15c5b92e330</wpml:orientedFilePath>
-              <wpml:orientedFileMD5/>
+              <wpml:orientedFileMD5 />
               <wpml:orientedFileSize>0</wpml:orientedFileSize>
               <wpml:orientedFileSuffix>Waypoint1</wpml:orientedFileSuffix>
               <wpml:orientedPhotoMode>normalPhoto</wpml:orientedPhotoMode>
@@ -154,7 +154,7 @@
               <wpml:gimbalPort>0</wpml:gimbalPort>
               <wpml:orientedCameraType>67</wpml:orientedCameraType>
               <wpml:orientedFilePath>d2b9551b-2f2c-4fcd-a070-c2a0b5943891</wpml:orientedFilePath>
-              <wpml:orientedFileMD5/>
+              <wpml:orientedFileMD5 />
               <wpml:orientedFileSize>0</wpml:orientedFileSize>
               <wpml:orientedFileSuffix>Waypoint2</wpml:orientedFileSuffix>
               <wpml:orientedPhotoMode>normalPhoto</wpml:orientedPhotoMode>

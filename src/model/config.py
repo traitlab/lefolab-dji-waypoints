@@ -9,6 +9,7 @@ class Config(BaseModel):
     num_waypoints_per_cluster: Annotated[int,
                                          Field(strict=True, ge=2, le=21845)]
     flight_height: int
+    point_dsm_height_approach: int
     point_dsm_height_buffer: int
 
     takeoff_point_wgs84_global_laty_lonx: str

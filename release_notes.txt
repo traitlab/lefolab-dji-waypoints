@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.7.1 vincent.lefalher@umontreal.ca 20240627
+- major updates with template values, new placemark, and height update
+
 0.6.9 vincent.lefalher@umontreal.ca 20240627
 - add __init__.py under lib and model folders
 - update setup.py

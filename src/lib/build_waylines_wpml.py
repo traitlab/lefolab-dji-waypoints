@@ -10,13 +10,31 @@ from lib.config import config
 class BuildWaylinesWPML:
 
     def __init__(self):
+
+        self.points_csv_properties = None
+        self.global_csv_properties = None
+
         # Find the Folder element containing Placemarks
         self.namespaces = {
             'kml': "http://www.opengis.net/kml/2.2",
             'wpml': "http://www.dji.com/wpmz/1.0.6"
         }
 
-    def read_csv(self, csv_file):
+    def read_global_csv(self, csv_file):
+        properties = []
+        with open(csv_file, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                takeoff_point_lon_x = row['takeoff_point_lon_x']
+                takeoff_point_lat_ylat = row['takeoff_point_lat_y']
+                takeoff_point_elevation_from_dsm = row['takeoff_point_elevation_from_dsm']
+                highest_elevation = row['highest_elevation']
+                properties.append((takeoff_point_lon_x, takeoff_point_lat_ylat,
+                                  takeoff_point_elevation_from_dsm, highest_elevation))
+
+        return properties
+
+    def read_points_csv(self, csv_file):
         properties = []
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
@@ -35,8 +53,12 @@ class BuildWaylinesWPML:
 
     def setup(self):
         # Read the coordinates from the CSV
-        self.csv_properties = self.read_csv(
+        self.points_csv_properties = self.read_points_csv(
             config.shortest_path_csv_file_path)
+
+        # Read the coordinates from the CSV
+        self.global_csv_properties = self.read_global_csv(
+            config.global_csv_file_path)
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -52,16 +74,24 @@ class BuildWaylinesWPML:
 
     def generate(self):
         # Add new Placemark elements for each coordinate
-        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
-            index = idx * 3
+        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
+            index = idx * 4
+            height = str(
+                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStopNoAction(
-                index, lat, lon, height_ellipsoidal)
+                index, lat, lon, height)
+            height = str(
+                (float(height_ellipsoidal) - float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
+            self.addPlacemarkStopNoAction(
+                index + 1, lat, lon, height)
             self.addPlacemarkWithActions(
-                index + 1, lat, lon, height_ellipsoidal, polygon_id)
+                index + 2, lat, lon, height_ellipsoidal, polygon_id)
+            height = str(
+                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStopNoAction(
-                index + 2, lat, lon, height_ellipsoidal)
+                index + 3, lat, lon, height)
 
-    def addPlacemarkStopNoAction(self, idx, lat, lon, height_ellipsoidal):
+    def addPlacemarkStopNoAction(self, idx, lat, lon, height):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
@@ -75,7 +105,7 @@ class BuildWaylinesWPML:
 
         wpml_execute_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-        wpml_execute_height.text = str(float(config.flight_height))
+        wpml_execute_height.text = height
 
         # Load properties from JSON file
         with open('./config/waylines_placemark_no_action.json') as json_file:
@@ -170,7 +200,7 @@ class BuildWaylinesWPML:
         wpml_execute_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
         wpml_execute_height.text = str(
-            float(height_ellipsoidal) + config.point_dsm_height_buffer)
+            (float(height_ellipsoidal) - float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer))
 
         # Load properties from JSON file
         with open('./config/waylines_placemark_with_actions.json') as json_file:

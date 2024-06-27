@@ -10,6 +10,9 @@ class BuildTemplateKML:
 
     def __init__(self):
 
+        self.points_csv_properties = None
+        self.global_csv_properties = None
+
         # Stop placemark
         self.stop_use_global_speed = '1'
         self.stop_use_global_heading_param = '1'
@@ -75,7 +78,21 @@ class BuildTemplateKML:
             'wpml': 'http://www.dji.com/wpmz/1.0.6'
         }
 
-    def read_csv(self, csv_file):
+    def read_global_csv(self, csv_file):
+        properties = []
+        with open(csv_file, 'r') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                takeoff_point_lon_x = row['takeoff_point_lon_x']
+                takeoff_point_lat_ylat = row['takeoff_point_lat_y']
+                takeoff_point_elevation_from_dsm = row['takeoff_point_elevation_from_dsm']
+                highest_elevation = row['highest_elevation']
+                properties.append((takeoff_point_lon_x, takeoff_point_lat_ylat,
+                                  takeoff_point_elevation_from_dsm, highest_elevation))
+
+        return properties
+
+    def read_points_csv(self, csv_file):
         properties = []
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
@@ -94,8 +111,12 @@ class BuildTemplateKML:
 
     def setup(self):
         # Read the coordinates from the CSV
-        self.csv_properties = self.read_csv(
+        self.points_csv_properties = self.read_points_csv(
             config.shortest_path_csv_file_path)
+
+        # Read the coordinates from the CSV
+        self.global_csv_properties = self.read_global_csv(
+            config.global_csv_file_path)
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -113,16 +134,25 @@ class BuildTemplateKML:
 
     def generate(self):
         # Add new Placemark elements for each coordinate
-        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
-            index = idx * 3
+        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
+            index = idx * 4
+            height = str(
+                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStop(
-                index, lat, lon, height_ellipsoidal, polygon_id)
+                index, lat, lon, height, polygon_id)
+            height = str(
+                (float(height_ellipsoidal) -
+                 float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
+            self.addPlacemarkStop(
+                index + 1, lat, lon, height, polygon_id)
             self.addPlacemarkActions(
-                index + 1, lat, lon, height_ellipsoidal, polygon_id)
-            self.addPlacemarkStop(
                 index + 2, lat, lon, height_ellipsoidal, polygon_id)
+            height = str(
+                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
+            self.addPlacemarkStop(
+                index + 3, lat, lon, height, polygon_id)
 
-    def addPlacemarkStop(self, idx, lat, lon, height_ellipsoidal, polygon_id):
+    def addPlacemarkStop(self, idx, lat, lon, height, polygon_id):
         # Add new Placemark elements for each coordinate
         # for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
@@ -138,12 +168,11 @@ class BuildTemplateKML:
 
         wpml_ellipsoidHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
-        wpml_ellipsoidHeight.text = str(
-            float(config.flight_height) + config.point_dsm_height_buffer)
+        wpml_ellipsoidHeight.text = height
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
-        wpml_height.text = str(config.flight_height)
+        wpml_height.text = height
 
         wpml_use_global_speed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
@@ -267,11 +296,14 @@ class BuildTemplateKML:
         wpml_ellipsoidHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
         wpml_ellipsoidHeight.text = str(
-            float(height_ellipsoidal) + config.point_dsm_height_buffer)
+            (float(height_ellipsoidal) -
+             float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer))
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
-        wpml_height.text = str(config.flight_height)
+        wpml_height.text = str(
+            (float(height_ellipsoidal) -
+             float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer))
 
         wpml_useGlobalSpeed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
