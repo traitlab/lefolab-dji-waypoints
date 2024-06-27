@@ -11,7 +11,8 @@ python setup.py sdist bdist_wheel
 # Installation
 
 ```bash
-mkdir -p /app/lefolab-drone-src
+sudo mkdir -p /app/lefolab-drone-src
+sudo chown -R lefolab:lefolab /app
 cd /app/lefolab-drone-src
 python3 -m venv .venv
 source ./.venv/bin/activate
@@ -76,6 +77,7 @@ Two other files are needed:
 ```bash
 # config
 sudo mkdir -p /usr/local/etc/lefolab-drone-src
+sudo chown -R lefolab:lefolab /app
 sudo mkdir -p /usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz
 cd /usr/local/etc/lefolab-drone-src
 sudo vi settings.yaml
