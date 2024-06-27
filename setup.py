@@ -26,7 +26,7 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'lefolab-drone=main:main',
+            'lefolab-drone=src.main:main',
         ],
     },
     license="GNU General Public License v3"
