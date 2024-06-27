@@ -20,6 +20,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.8.10',
-    install_requires=["pydantic", "pyyaml", "geopandas", "rasterio", "pyproj"],
+    install_requires=["pydantic", "pyyaml", "shapely",
+                      "geopandas", "rasterio", "pyproj", "networkx"],
     license="GNU GENERAL PUBLIC LICENSE v3"
 )
