@@ -11,12 +11,12 @@ python setup.py sdist bdist_wheel
 # Installation
 
 ```bash
-sudo mkdir -p /opt/lefolab-drone-src
-cd /opt/lefolab-drone-src
-sudo python3 -m venv .venv
+mkdir -p /app/lefolab-drone-src
+cd /app/lefolab-drone-src
+python3 -m venv .venv
 source ./.venv/bin/activate
-sudo python3 -m pip install --upgrade pip
-sudo pip install git+https://vince7lf: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@github.com/vincelf-IVADO/lefolab-drone-src.git
+python3 -m pip install --upgrade pip
+pip install git+https://vince7lf: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@github.com/vincelf-IVADO/lefolab-drone-src.git
 sudo pip show lefolab-drone-src
 ```
 
