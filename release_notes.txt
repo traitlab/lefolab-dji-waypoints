@@ -1,6 +1,10 @@
 Issues
 - No know issues
 
+0.6.7 vincent.lefalher@umontreal.ca 20240627
+- update prod_path = "/usr/local/etc/lefolab-drone-src/settings.yaml"
+- update setup.py and README
+
 0.6.6 vincent.lefalher@umontreal.ca 20240625
 - clip the DSM from the zone of interest and extract the max value (max height)
 

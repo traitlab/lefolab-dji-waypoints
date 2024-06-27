@@ -9,7 +9,7 @@ from model.config import Config
 def load_config() -> Config:
     # Define the paths for dev and prod modes
     config_path = os.path.join('./config/settings.yaml')
-    prod_path = "/usr/local/etc/lefolab_drone_src/settings.yaml"
+    prod_path = "/usr/local/etc/lefolab-drone-src/settings.yaml"
 
     # Load the configuration file
     if os.path.exists(config_path):
