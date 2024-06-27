@@ -1,6 +1,10 @@
 Issues
 - No know issues
 
+0.6.9 vincent.lefalher@umontreal.ca 20240627
+- add __init__.py under lib and model folders
+- update setup.py
+
 0.6.8 vincent.lefalher@umontreal.ca 20240627
 - add __main__ into main.py
 

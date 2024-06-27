@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="lefolab-drone-src",
-    version="0.6.8",
+    version="0.6.9",
     author="Vincent Le Falher",
     author_email="vincent.lefalher@umontreal.ca",
     description="LEFO LAB DJI KMZ Generator",
