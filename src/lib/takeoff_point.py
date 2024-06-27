@@ -37,4 +37,4 @@ class TakeOffPoint():
 
         # Save to GeoPackage
         gdf.to_file(config.takeoff_point_file_path,
-                    layer='takeoff_point_layer', driver='GPKG')
+                    layer='takeoff_point_layer', driver='GPKG', mode='w')

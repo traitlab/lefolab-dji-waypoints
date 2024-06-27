@@ -137,18 +137,18 @@ class BuildTemplateKML:
         for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
             index = idx * 4
             height = str(
-                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
+                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStop(
                 index, lat, lon, height, polygon_id)
             height = str(
                 (float(height_ellipsoidal) -
-                 float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
+                 float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
             self.addPlacemarkStop(
                 index + 1, lat, lon, height, polygon_id)
             self.addPlacemarkActions(
                 index + 2, lat, lon, height_ellipsoidal, polygon_id)
             height = str(
-                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
+                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStop(
                 index + 3, lat, lon, height, polygon_id)
 
@@ -297,13 +297,13 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
         wpml_ellipsoidHeight.text = str(
             (float(height_ellipsoidal) -
-             float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer))
+             float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
         wpml_height.text = str(
             (float(height_ellipsoidal) -
-             float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer))
+             float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
 
         wpml_useGlobalSpeed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')

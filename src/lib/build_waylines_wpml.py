@@ -77,17 +77,17 @@ class BuildWaylinesWPML:
         for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
             index = idx * 4
             height = str(
-                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
+                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStopNoAction(
                 index, lat, lon, height)
             height = str(
-                (float(height_ellipsoidal) - float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
+                (float(height_ellipsoidal) - float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
             self.addPlacemarkStopNoAction(
                 index + 1, lat, lon, height)
             self.addPlacemarkWithActions(
                 index + 2, lat, lon, height_ellipsoidal, polygon_id)
             height = str(
-                float(config.flight_height) - float(self.global_csv_properties[0][2]) + float(config.point_dsm_height_buffer))
+                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
             self.addPlacemarkStopNoAction(
                 index + 3, lat, lon, height)
 
@@ -200,7 +200,7 @@ class BuildWaylinesWPML:
         wpml_execute_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
         wpml_execute_height.text = str(
-            (float(height_ellipsoidal) - float(self.global_csv_properties[0][2])) + float(config.point_dsm_height_buffer))
+            (float(height_ellipsoidal) - float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
 
         # Load properties from JSON file
         with open('./config/waylines_placemark_with_actions.json') as json_file:

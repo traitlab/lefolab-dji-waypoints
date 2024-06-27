@@ -4,7 +4,7 @@ flight_height: 460
 # conversion GPSh NRCAN.GC.CA
 point_dsm_height_buffer: 10
 
-takeoff_point_wgs84_global_laty_lonx: "45.988998, -74.005927"
+takeoff_point_wgs84_global_laty_lonx: "45.535075, -73.149231"
 takeoff_point_file_path: "/mnt/c/Users/vincent.le.falher/Downloads/20240620_gault_drone/20240620_gault_drone_takeoff_point.gpkg"
 
 from_epsg: "epsg:32618"
