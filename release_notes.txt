@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.6.8 vincent.lefalher@umontreal.ca 20240627
+- add __main__ into main.py
+
 0.6.7 vincent.lefalher@umontreal.ca 20240627
 - update prod_path = "/usr/local/etc/lefolab-drone-src/settings.yaml"
 - update setup.py and README
