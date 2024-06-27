@@ -88,16 +88,19 @@ sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/scripts/w
 # test data
 mkdir -p /data/xprize/20240529_sblz1z2_p1
 cd /data/xprize/20240529_sblz1z2_p1
-sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/test/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.gpkg
-sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/test/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_zone_of_interest.gpkg
-sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/test/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_dsm_highdis.cog.tif
+# Downdload data from Google Drive using browser
+# https://drive.google.com/drive/folders/1A_qd60c40s3TuK89o3ZAFM27lRA-5KbS?usp=drive_link
+# copy from Downloads to /data/xprize/20240529_sblz1z2_p1
+cp ~/Downloads/20240529_sblz1z2_p1.gpkg /data/xprize/20240529_sblz1z2_p1
+cp ~/Downloads/20240529_sblz1z2_p1_zone_of_interest.gpkg /data/xprize/20240529_sblz1z2_p1
+cp ~/Downloads/20240529_sblz1z2_p1_dsm_highdis.cog.tif /data/xprize/20240529_sblz1z2_p1
 ```
-
 
 # Run
 
 ```bash
+cd /app/lefolab-drone-src
 source ./.venv/bin/activate
-PYTHONPATH=$PYTHONPATH:.:./src
-python3 -m ./src/main.py
+export PYTHONPATH=$PYTHONPATH:.:./src
+lefolab-drone
 ```
