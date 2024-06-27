@@ -17,6 +17,7 @@ sudo python3 -m venv .venv
 source ./.venv/bin/activate
 sudo python3 -m pip install --upgrade pip
 sudo pip install git+https://vince7lf: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@github.com/vincelf-IVADO/lefolab-drone-src.git
+sudo pip show lefolab-drone-src
 ```
 
 # Requirements

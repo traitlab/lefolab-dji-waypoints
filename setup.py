@@ -22,5 +22,11 @@ setuptools.setup(
     python_requires='>=3.8.10',
     install_requires=["pydantic", "pyyaml", "shapely",
                       "geopandas", "rasterio", "pyproj", "networkx"],
-    license="GNU GENERAL PUBLIC LICENSE v3"
+    license="GNU GENERAL PUBLIC LICENSE v3",
+    # other setup parameters
+    entry_points={
+        'console_scripts': [
+            'lefolab-drone=lefolab_drone_src.main:main',
+        ],
+    },
 )
