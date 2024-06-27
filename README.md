@@ -4,13 +4,13 @@ App and integration with drone
 
 # Prepare package
 
-```
+```bash
 python setup.py sdist bdist_wheel
 ```
 
 # Installation
 
-```
+```bash
 sudo mkdir -p /opt/lefolab-drone-src
 cd /opt/lefolab-drone-src
 sudo python3 -m venv .venv
@@ -30,7 +30,7 @@ sudo pip install git+https://vince7lf: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@g
 
 # Configuration
 
-Configuration file should be located under `/usr/local/etc/lefolab_drone_src/settings.yaml`
+Configuration file should be located under `/usr/local/etc/lefolab-drone-src/settings.yaml`
 
 Here is a configuration sample : 
 
@@ -44,35 +44,58 @@ point_dsm_height_buffer: 10
 # it's also used to add a buffer to the height above the tree for the picture
 
 takeoff_point_wgs84_global_laty_lonx: "45.535075, -73.149231"
-takeoff_point_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_starting_point.gpkg'
+takeoff_point_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_starting_point.gpkg'
 
 from_epsg: "epsg:32618"
 to_epsg: "epsg:4326"
 
-tree_polygons_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.gpkg'
-zone_of_interest_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_zone_of_interest.gpkg'
-dsm_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_dsm_highdis.cog.tif'
+tree_polygons_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.gpkg'
+zone_of_interest_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_zone_of_interest.gpkg'
+dsm_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_dsm_highdis.cog.tif'
 
-global_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_global_values.csv'
-points_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints.csv'
-shortest_path_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
+global_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_global_values.csv'
+points_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints.csv'
+shortest_path_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
 
-kml_model_file_path: './scripts/wpml/model/Waypoint2/wpmz/template.kml'
-output_kml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
+kml_model_file_path: '/usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz/template.kml'
+output_kml_file_path: '/data/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
 
-wpml_model_file_path: './scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
-output_wpml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'
+wpml_model_file_path: '/usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz/waylines.wpml'
+output_wpml_file_path: '/data/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'
 
 kmz_base_name: '20240529_sblz1z2_p1'
-kmz_root_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'
+kmz_root_file_path: '/data/xprize'
 ```
 
 Two other files are needed: 
 - ./config/waylines_placemark_no_action.json
 - ./config/waylines_placemark_with_actions.json
 
-# Run
+## Steps to configure: 
+```bash
+# config
+sudo mkdir -p /usr/local/etc/lefolab-drone-src
+sudo mkdir -p /usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz
+cd /usr/local/etc/lefolab-drone-src
+sudo vi settings.yaml
+
+# KML and WPML models 
+cd /usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz
+sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/scripts/wpml/model/Waypoint2/wpmz/template.kml
+sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/scripts/wpml/model/Waypoint2/wpmz/waylines.wpml
+
+# test data
+mkdir -p /data/xprize/20240529_sblz1z2_p1
+cd /data/xprize/20240529_sblz1z2_p1
+sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/test/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.gpkg
+sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/test/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_zone_of_interest.gpkg
+sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/test/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_dsm_highdis.cog.tif
 ```
+
+
+# Run
+
+```bash
 source ./.venv/bin/activate
 PYTHONPATH=$PYTHONPATH:.:./src
 python3 -m ./src/main.py
