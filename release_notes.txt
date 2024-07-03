@@ -1,5 +1,10 @@
+
+
 Issues
 - No know issues
+
+0.7.3 vincent.lefalher@umontreal.ca 20240628
+- remove _ of _zoom
 
 0.7.2 vincent.lefalher@umontreal.ca 20240627
 - set the takeoff point elevation in the config file

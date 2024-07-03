@@ -337,7 +337,7 @@ class BuildTemplateKML:
         wpml_actionGroup.append(wpml_action)
 
         wpml_action = self.addPlacemarkAction('1', '168', str(
-            polygon_id) + "_zoom", '703556e4-81fb-4294-b607-05d5f748377f', '703556e4-81fb-4294-b607-05d5f748377f')
+            polygon_id) + "zoom", '703556e4-81fb-4294-b607-05d5f748377f', '703556e4-81fb-4294-b607-05d5f748377f')
         wpml_actionGroup.append(wpml_action)
 
         self.folder.append(placemark)
