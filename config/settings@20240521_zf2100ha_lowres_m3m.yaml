@@ -11,5 +11,5 @@ zone_of_interest_layer: 'zone_of_insterest'
 
 dsm_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/20240521_zf2100ha_lowres_m3m_dsm_subset.tif'
 
-global_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-drone-src/global_values.csv'
-points_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-drone-src/waypoints.csv'
+global_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-dji-waypoints/global_values.csv'
+points_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-dji-waypoints/waypoints.csv'

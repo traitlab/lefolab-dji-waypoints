@@ -4,14 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="lefolab-drone-src",
-    version="0.7.3",
+    name="lefolab-dji-waypoints",
+    version="0.1.1",
     author="Vincent Le Falher",
     author_email="vincent.lefalher@umontreal.ca",
     description="LEFO LAB DJI KMZ Generator",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/vincelf-IVADO/lefolab-drone-src",
+    url="https://github.com/vincelf-IVADO/lefolab-dji-waypoints",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     classifiers=[

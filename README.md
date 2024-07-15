@@ -1,4 +1,4 @@
-# lefolab-drone-src
+# lefolab-dji-waypoints
 
 App and integration with drone
 
@@ -11,14 +11,14 @@ python setup.py sdist bdist_wheel
 # Installation
 
 ```bash
-sudo mkdir -p /app/lefolab-drone-src
+sudo mkdir -p /app/lefolab-dji-waypoints
 sudo chown -R lefolab:lefolab /app
-cd /app/lefolab-drone-src
+cd /app/lefolab-dji-waypoints
 python3 -m venv .venv
 source ./.venv/bin/activate
 python3 -m pip install --upgrade pip
-pip install git+https://vince7lf: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@github.com/vincelf-IVADO/lefolab-drone-src.git
-pip show lefolab-drone-src
+pip install git+https://vince7lf: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@github.com/vincelf-IVADO/lefolab-dji-waypoints.git
+pip show lefolab-dji-waypoints
 ```
 
 # Requirements
@@ -32,7 +32,7 @@ pip show lefolab-drone-src
 
 # Configuration
 
-Configuration file should be located under `/usr/local/etc/lefolab-drone-src/settings.yaml`
+Configuration file should be located under `/usr/local/etc/lefolab-dji-waypoints/settings.yaml`
 
 Here is a configuration sample : 
 
@@ -59,10 +59,10 @@ global_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_glob
 points_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints.csv'
 shortest_path_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
 
-kml_model_file_path: '/usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz/template.kml'
+kml_model_file_path: '/usr/local/etc/lefolab-dji-waypoints/wpml/model/Waypoint2/wpmz/template.kml'
 output_kml_file_path: '/data/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
 
-wpml_model_file_path: '/usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz/waylines.wpml'
+wpml_model_file_path: '/usr/local/etc/lefolab-dji-waypoints/wpml/model/Waypoint2/wpmz/waylines.wpml'
 output_wpml_file_path: '/data/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'
 
 kmz_base_name: '20240529_sblz1z2_p1'
@@ -76,16 +76,16 @@ Two other files are needed:
 ## Steps to configure: 
 ```bash
 # config
-sudo mkdir -p /usr/local/etc/lefolab-drone-src
+sudo mkdir -p /usr/local/etc/lefolab-dji-waypoints
 sudo chown -R lefolab:lefolab /app
-sudo mkdir -p /usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz
-cd /usr/local/etc/lefolab-drone-src
+sudo mkdir -p /usr/local/etc/lefolab-dji-waypoints/wpml/model/Waypoint2/wpmz
+cd /usr/local/etc/lefolab-dji-waypoints
 sudo vi settings.yaml
 
 # KML and WPML models 
-cd /usr/local/etc/lefolab-drone-src/wpml/model/Waypoint2/wpmz
-sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/scripts/wpml/model/Waypoint2/wpmz/template.kml
-sudo wget https://github.com/vincelf-IVADO/lefolab-drone-src/blob/main/scripts/wpml/model/Waypoint2/wpmz/waylines.wpml
+cd /usr/local/etc/lefolab-dji-waypoints/wpml/model/Waypoint2/wpmz
+sudo wget https://github.com/vincelf-IVADO/lefolab-dji-waypoints/blob/main/scripts/wpml/model/Waypoint2/wpmz/template.kml
+sudo wget https://github.com/vincelf-IVADO/lefolab-dji-waypoints/blob/main/scripts/wpml/model/Waypoint2/wpmz/waylines.wpml
 
 # test data
 mkdir -p /data/xprize/20240529_sblz1z2_p1
@@ -101,7 +101,7 @@ cp ~/Downloads/20240529_sblz1z2_p1_dsm_highdis.cog.tif /data/xprize/20240529_sbl
 # Run
 
 ```bash
-cd /app/lefolab-drone-src
+cd /app/lefolab-dji-waypoints
 source ./.venv/bin/activate
 export PYTHONPATH=$PYTHONPATH:.:./src
 lefolab-drone
