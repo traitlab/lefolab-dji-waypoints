@@ -1,0 +1,28 @@
+<Placemark>
+  <Point>
+    <coordinates>
+      -74.0062006328517,45.98934896818
+    </coordinates>
+  </Point>
+  <wpml:index>1</wpml:index>
+  <wpml:executeHeight>353.036712646484</wpml:executeHeight>
+  <wpml:waypointSpeed>15</wpml:waypointSpeed>
+  <wpml:waypointHeadingParam>
+    <wpml:waypointHeadingMode>followWayline</wpml:waypointHeadingMode>
+    <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
+    <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
+    <wpml:waypointHeadingAngleEnable>0</wpml:waypointHeadingAngleEnable>
+    <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
+  </wpml:waypointHeadingParam>
+  <wpml:waypointTurnParam>
+    <wpml:waypointTurnMode>toPointAndStopWithDiscontinuityCurvature</wpml:waypointTurnMode>
+    <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
+  </wpml:waypointTurnParam>
+  <wpml:useStraightLine>1</wpml:useStraightLine>
+  <wpml:waypointGimbalHeadingParam>
+    <wpml:waypointGimbalPitchAngle>0</wpml:waypointGimbalPitchAngle>
+    <wpml:waypointGimbalYawAngle>0</wpml:waypointGimbalYawAngle>
+  </wpml:waypointGimbalHeadingParam>
+  <wpml:isRisky>0</wpml:isRisky>
+  <wpml:waypointWorkType>0</wpml:waypointWorkType>
+</Placemark>
