@@ -4,6 +4,23 @@ from pathlib import Path
 from pydantic import BaseModel, Field, FilePath, field_validator
 from typing_extensions import Annotated
 
+# config
+# base_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'
+# base_name: '20240529_sblz1z2_p1'
+
+# # global_csv_file_path: 'global_values.csv'
+# # points_csv_file_path: 'waypoints.csv'
+# # shortest_path_csv_file_path: 'waypoints_shortest_path.csv'
+
+# kml_model_file_path: './scripts/wpml/model/Waypoint2/wpmz/template.kml'
+# # output_kml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/template.kml'
+
+# wpml_model_file_path: 'scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
+# # output_wpml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'
+
+# # kmz_base_name: '20240529_sblz1z2_p1'
+# # kmz_base_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'
+
 
 class Config(BaseModel):
     flight_height: int
@@ -11,18 +28,15 @@ class Config(BaseModel):
     point_dsm_height_approach: int
     point_dsm_height_buffer: int
 
-    global_csv_file_path: Path
-    points_csv_file_path: Path
-    shortest_path_csv_file_path: Path
+    base_path: Path
+    base_name: str
 
-    kml_model_file_path: FilePath
-    output_kml_file_path: Path
+    points_csv_file_path: str = 'waypoints.csv'
 
-    wpml_model_file_path: FilePath
-    output_wpml_file_path: Path
-
-    kmz_base_name: str
-    kmz_root_file_path: Path
+    kml_model_file_path: FilePath = './scripts/wpml/model/Waypoint2/wpmz/template.kml'
+    output_kml_file_path: Path = 'wpmz/template.kml'
+    wpml_model_file_path: FilePath = './scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
+    output_wpml_file_path: Path = 'wpmz/waylines.wpml'
 
     class Config:
         arbitrary_types_allowed = True

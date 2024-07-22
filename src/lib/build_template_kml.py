@@ -1,6 +1,7 @@
 import csv
 import os
 import xml.etree.ElementTree as ET
+from pathlib import Path
 from xml.dom.minidom import parseString
 
 from lib.config import config
@@ -11,7 +12,6 @@ class BuildTemplateKML:
     def __init__(self):
 
         self.points_csv_properties = None
-        self.global_csv_properties = None
 
         # Stop placemark
         self.stop_use_global_speed = '1'
@@ -78,20 +78,6 @@ class BuildTemplateKML:
             'wpml': 'http://www.dji.com/wpmz/1.0.6'
         }
 
-    def read_global_csv(self, csv_file):
-        properties = []
-        with open(csv_file, 'r') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                takeoff_point_lon_x = row['takeoff_point_lon_x']
-                takeoff_point_lat_ylat = row['takeoff_point_lat_y']
-                takeoff_point_elevation_from_dsm = row['takeoff_point_elevation_from_dsm']
-                highest_elevation = row['highest_elevation']
-                properties.append((takeoff_point_lon_x, takeoff_point_lat_ylat,
-                                  takeoff_point_elevation_from_dsm, highest_elevation))
-
-        return properties
-
     def read_points_csv(self, csv_file):
         properties = []
         with open(csv_file, 'r') as file:
@@ -112,11 +98,9 @@ class BuildTemplateKML:
     def setup(self):
         # Read the coordinates from the CSV
         self.points_csv_properties = self.read_points_csv(
-            config.shortest_path_csv_file_path)
-
-        # Read the coordinates from the CSV
-        self.global_csv_properties = self.read_global_csv(
-            config.global_csv_file_path)
+            Path(config.base_path) / config.base_name /
+            f"{config.base_name}_{config.points_csv_file_path}"
+        )
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -347,9 +331,11 @@ class BuildTemplateKML:
         pretty_xml_str = self.beautify_xml()
 
         # Save the updated KML file
+        kml_path = Path(config.base_path) / config.base_name / \
+            config.output_kml_file_path
         os.makedirs(os.path.dirname(
-            config.output_kml_file_path), exist_ok=True)
-        with open(config.output_kml_file_path, 'w', encoding='UTF-8') as file:
+            kml_path), exist_ok=True)
+        with open(kml_path, 'w', encoding='UTF-8') as file:
             file.write(pretty_xml_str)
 
     def beautify_xml(self):

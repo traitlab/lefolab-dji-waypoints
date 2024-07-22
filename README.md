@@ -66,7 +66,7 @@ wpml_model_file_path: '/usr/local/etc/lefolab-dji-waypoints/wpml/model/Waypoint2
 output_wpml_file_path: '/data/xprize/20240529_sblz1z2_p1/wpmz/waylines.wpml'
 
 kmz_base_name: '20240529_sblz1z2_p1'
-kmz_root_file_path: '/data/xprize'
+kmz_base_path: '/data/xprize'
 ```
 
 Two other files are needed: 
