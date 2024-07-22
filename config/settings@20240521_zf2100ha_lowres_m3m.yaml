@@ -1,2 +1,21 @@
-global_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-dji-waypoints/global_values.csv'
-points_csv_file_path: '/home/vincelf/vscode-workspaces/lefolab-dji-waypoints/waypoints.csv'
+flight_height: 400
+takeoff_point_elevation: 331
+# <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
+# conversion GPSh NRCAN.GC.CA
+point_dsm_height_approach: 5
+point_dsm_height_buffer: 10
+# buffer is added to the flight height
+# it's also used to add a buffer to the height above the tree for the picture
+
+global_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/global_values.csv'
+points_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3/mwaypoints.csv'
+shortest_path_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/20240521_zf2100ha_lowres_m3m_waypoints_shortest_path.csv'
+
+kml_model_file_path: './scripts/wpml/model/Waypoint2/wpmz/template.kml'
+output_kml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/wpmz/template.kml'
+
+wpml_model_file_path: 'scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
+output_wpml_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/wpmz/waylines.wpml'
+
+kmz_base_name: '20240521_zf2100ha_lowres_m3m'
+kmz_root_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'

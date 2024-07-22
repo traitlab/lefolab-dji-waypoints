@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.1.2b vincent.lefalher@umontreal.ca 20240722
+- setting files updates.
+
 0.1.2 vincent.lefalher@umontreal.ca 20240722
 - clean project with unecessary config properties
 

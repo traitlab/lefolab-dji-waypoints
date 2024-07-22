@@ -1,4 +1,5 @@
 flight_height: 400
+takeoff_point_elevation: 331
 # <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
 # conversion GPSh NRCAN.GC.CA
 point_dsm_height_approach: 5
