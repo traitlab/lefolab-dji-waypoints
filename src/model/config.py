@@ -6,23 +6,10 @@ from typing_extensions import Annotated
 
 
 class Config(BaseModel):
-    num_waypoints_per_cluster: Annotated[int,
-                                         Field(strict=True, ge=2, le=21845)]
     flight_height: int
     takeoff_point_elevation: int
     point_dsm_height_approach: int
     point_dsm_height_buffer: int
-
-    takeoff_point_wgs84_global_laty_lonx: str
-    # takeoff_point_file_path: Path
-
-    from_epsg: str
-    to_epsg: str
-
-    tree_polygons_file_path: FilePath
-    takeoff_point_file_path: Path
-    zone_of_interest_path: FilePath
-    dsm_file_path: FilePath
 
     global_csv_file_path: Path
     points_csv_file_path: Path

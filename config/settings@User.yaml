@@ -1,4 +1,3 @@
-num_waypoints_per_cluster: 50
 flight_height: 460
 # <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
 # conversion GPSh NRCAN.GC.CA
