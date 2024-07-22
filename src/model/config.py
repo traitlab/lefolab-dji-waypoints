@@ -26,20 +26,3 @@ class Config(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-
-    @field_validator('takeoff_point_wgs84_global_laty_lonx')
-    def validate_coords(cls, v):
-        try:
-            lat, lon = map(float, v.split(','))
-            if not (-90 <= lat <= 90 and -180 <= lon <= 180):
-                raise ValueError
-        except ValueError:
-            raise ValueError(
-                'Invalid coordinates. Should be in the format "latitude, longitude" with valid ranges.')
-        return v
-
-    @field_validator('from_epsg', 'to_epsg')
-    def validate_epsg(cls, v):
-        if not re.match(r'^epsg:\d+$', v, re.IGNORECASE):
-            raise ValueError('EPSG code must be in the format "epsg:XXXX"')
-        return v

@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.1.2 vincent.lefalher@umontreal.ca 20240722
+- clean project with unecessary config properties
+
 0.1.1 vincent.lefalher@umontreal.ca 20240715
 - split lefolab-drone-src into 2 projects. This preoject generates the KMZ from CSV coordinates.
 
