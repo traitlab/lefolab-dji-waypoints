@@ -31,7 +31,7 @@ class Config(BaseModel):
     base_path: Path
     base_name: str
 
-    points_csv_file_path: str = 'waypoints.csv'
+    points_csv_file_path: FilePath
 
     kml_model_file_path: FilePath = './scripts/wpml/model/Waypoint2/wpmz/template.kml'
     output_kml_file_path: Path = 'wpmz/template.kml'

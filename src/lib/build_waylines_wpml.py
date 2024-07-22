@@ -40,9 +40,7 @@ class BuildWaylinesWPML:
     def setup(self):
         # Read the coordinates from the CSV
         self.points_csv_properties = self.read_points_csv(
-            Path(config.base_path) / config.base_name /
-            f"{config.base_name}_{config.points_csv_file_path}"
-        )
+            config.points_csv_file_path)
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
