@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.1.4 vincent.lefalher@umontreal.ca 20240731
+- pass the config file to command line
+
 0.1.3b vincent.lefalher@umontreal.ca 20240722
 - use implicit points csv file path in config
 
