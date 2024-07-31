@@ -90,7 +90,7 @@ class BuildWaylinesWPML:
         wpml_execute_height.text = height
 
         # Load properties from JSON file
-        with open('./config/waylines_placemark_no_action.json') as json_file:
+        with open(config.waylines_placemark_no_action) as json_file:
             properties = json.load(json_file)
 
         # Add other properties from JSON file
@@ -185,7 +185,7 @@ class BuildWaylinesWPML:
             (float(height_ellipsoidal) - float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
 
         # Load properties from JSON file
-        with open('./config/waylines_placemark_with_actions.json') as json_file:
+        with open(config.waylines_placemark_with_actions) as json_file:
             properties = json.load(json_file)
 
         # Other attributes

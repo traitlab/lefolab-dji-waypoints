@@ -38,5 +38,8 @@ class Config(BaseModel):
     wpml_model_file_path: FilePath = './scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
     output_wpml_file_path: Path = 'wpmz/waylines.wpml'
 
+    waylines_placemark_no_action: FilePath = './config/waylines_placemark_no_action.json'
+    waylines_placemark_with_actions: FilePath = './config/waylines_placemark_with_actions.json'
+
     class Config:
         arbitrary_types_allowed = True

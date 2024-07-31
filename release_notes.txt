@@ -1,6 +1,9 @@
 Issues
 - No know issues
 
+0.1.5 vincent.lefalher@umontreal.ca 20240731
+- add config properties waylines_placemark_no_action and waylines_placemark_with_actions
+
 0.1.4 vincent.lefalher@umontreal.ca 20240731
 - pass the config file to command line
 
