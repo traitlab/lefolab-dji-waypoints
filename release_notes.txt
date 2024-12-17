@@ -1,6 +1,11 @@
 Issues
 - No know issues
 
+0.1.6 vincent.lefalher@umontreal.ca 20240731
+- update settings files; add lefotitan settings
+- update README.md
+- update git-tag.sh and run-git-tag.sh
+
 0.1.5 vincent.lefalher@umontreal.ca 20240731
 - add config properties waylines_placemark_no_action and waylines_placemark_with_actions
 

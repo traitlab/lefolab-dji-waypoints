@@ -7,9 +7,9 @@ point_dsm_height_buffer: 10
 # buffer is added to the flight height
 # it's also used to add a buffer to the height above the tree for the picture
 
-base_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'
+base_path: '/data/xprize'
 base_name: '20240529_sblz1z2_p1'
-points_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
+points_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
 
 # required depending on the installation path. If started from the project folder, no need as defaujlt is relative to project folder.
 # kml_model_file_path: '/opt/treesight/lefolab-dji-waypoints/scripts/wpml/model/Waypoint2/wpmz/template.kml'

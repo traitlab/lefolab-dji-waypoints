@@ -9,3 +9,10 @@ point_dsm_height_buffer: 10
 
 base_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'
 base_name: '20240521_zf2100ha_lowres_m3m'
+points_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240521_zf2100ha_lowres_m3m/20240521_zf2100ha_lowres_m3m_waypoints_shortest_path.csv'
+
+# required depending on the installation path. If started from the project folder, no need as defaujlt is relative to project folder.
+# kml_model_file_path: '/opt/treesight/lefolab-dji-waypoints/scripts/wpml/model/Waypoint2/wpmz/template.kml'
+# wpml_model_file_path: '/opt/treesight/lefolab-dji-waypoints/scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
+# waylines_placemark_no_action: '/opt/treesight/lefolab-dji-waypoints/config/waylines_placemark_no_action.json'
+# waylines_placemark_with_actions: '/opt/treesight/lefolab-dji-waypoints/config/waylines_placemark_with_action.json'
