@@ -9,6 +9,7 @@ from lib.config import config
 
 class BuildTemplateKML:
 
+    # -------------------------------------------------------------------------
     def __init__(self):
 
         self.points_csv_properties = None
@@ -78,6 +79,7 @@ class BuildTemplateKML:
             'wpml': 'http://www.dji.com/wpmz/1.0.6'
         }
 
+    # -------------------------------------------------------------------------
     def read_points_csv(self, csv_file):
         properties = []
         with open(csv_file, 'r') as file:
@@ -95,6 +97,7 @@ class BuildTemplateKML:
 
         return properties
 
+    # -------------------------------------------------------------------------
     def setup(self):
         # Read the coordinates from the CSV
         self.points_csv_properties = self.read_points_csv(
@@ -114,6 +117,7 @@ class BuildTemplateKML:
         for placemark in self.folder.findall('kml:Placemark', self.namespaces):
             self.folder.remove(placemark)
 
+    # -------------------------------------------------------------------------
     def generate(self):
         # Add new Placemark elements for each coordinate
         for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
@@ -134,6 +138,7 @@ class BuildTemplateKML:
             self.addPlacemarkStop(
                 index + 3, lat, lon, height, polygon_id)
 
+    # -------------------------------------------------------------------------
     def addPlacemarkStop(self, idx, lat, lon, height, polygon_id):
         # Add new Placemark elements for each coordinate
         # for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
@@ -185,6 +190,7 @@ class BuildTemplateKML:
 
         self.folder.append(placemark)
 
+    # -------------------------------------------------------------------------
     def addPlacemarkActionGroup(self, index):
         action_group = ET.Element(f'{{{self.namespaces["wpml"]}}}actionGroup')
         ET.SubElement(
@@ -203,6 +209,7 @@ class BuildTemplateKML:
 
         return action_group
 
+    # -------------------------------------------------------------------------
     def addPlacemarkAction(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
         action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
         ET.SubElement(
@@ -263,6 +270,7 @@ class BuildTemplateKML:
 
         return action
 
+    # -------------------------------------------------------------------------
     def addPlacemarkActions(self, idx, lat, lon, height_ellipsoidal, polygon_id):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
@@ -324,6 +332,7 @@ class BuildTemplateKML:
 
         self.folder.append(placemark)
 
+    # -------------------------------------------------------------------------
     def saveNewKML(self):
         # Reopen, beautify it, and save it
         pretty_xml_str = self.beautify_xml()
@@ -336,6 +345,7 @@ class BuildTemplateKML:
         with open(kml_path, 'w', encoding='UTF-8') as file:
             file.write(pretty_xml_str)
 
+    # -------------------------------------------------------------------------
     def beautify_xml(self):
 
         # Convert the XML tree to a string

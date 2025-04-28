@@ -8,6 +8,7 @@ import yaml
 from model.config import Config
 
 
+# -----------------------------------------------------------------------------
 def load_config(config_path: str) -> Config:
     # Load the configuration file
     if os.path.exists(config_path):

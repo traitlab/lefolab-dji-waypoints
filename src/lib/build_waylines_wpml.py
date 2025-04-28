@@ -10,6 +10,7 @@ from lib.config import config
 
 class BuildWaylinesWPML:
 
+    # -------------------------------------------------------------------------
     def __init__(self):
 
         self.points_csv_properties = None
@@ -20,6 +21,7 @@ class BuildWaylinesWPML:
             'wpml': "http://www.dji.com/wpmz/1.0.6"
         }
 
+    # -------------------------------------------------------------------------
     def read_points_csv(self, csv_file):
         properties = []
         with open(csv_file, 'r') as file:
@@ -37,6 +39,7 @@ class BuildWaylinesWPML:
 
         return properties
 
+    # -------------------------------------------------------------------------
     def setup(self):
         # Read the coordinates from the CSV
         self.points_csv_properties = self.read_points_csv(
@@ -54,6 +57,7 @@ class BuildWaylinesWPML:
         for placemark in self.folder.findall('kml:Placemark', self.namespaces):
             self.folder.remove(placemark)
 
+    # -------------------------------------------------------------------------
     def generate(self):
         # Add new Placemark elements for each coordinate
         for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
@@ -73,6 +77,7 @@ class BuildWaylinesWPML:
             self.addPlacemarkStopNoAction(
                 index + 3, lat, lon, height)
 
+    # -------------------------------------------------------------------------
     def addPlacemarkStopNoAction(self, idx, lat, lon, height):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
@@ -101,6 +106,7 @@ class BuildWaylinesWPML:
 
         self.folder.append(placemark)
 
+    # -------------------------------------------------------------------------
     def addProperty(self, parent_elem, key, value):
         if isinstance(value, dict):
             # If value is a dictionary, create a sub-element and recursively call addProperty
@@ -114,6 +120,7 @@ class BuildWaylinesWPML:
                 parent_elem, f'{{{self.namespaces["wpml"]}}}{key}')
             prop_elem.text = str(value)
 
+    # -------------------------------------------------------------------------
     def addPlacemarkAction(self, parent, action, polygon_id):
         action_elem = ET.SubElement(
             parent, f'{{{self.namespaces["wpml"]}}}action')
@@ -144,6 +151,7 @@ class BuildWaylinesWPML:
                 action_child_elem = ET.SubElement(action_elem, f'wpml:{key}')
                 action_child_elem.text = value
 
+    # -------------------------------------------------------------------------
     def addPlacemarkActionGroup(self, idx, action_group, polygon_id):
         action_group_elem = ET.Element(
             f'{{{self.namespaces["wpml"]}}}actionGroup')
@@ -167,6 +175,7 @@ class BuildWaylinesWPML:
                 # action_group_child_elem.text = value
         return action_group_elem
 
+    # -------------------------------------------------------------------------
     def addPlacemarkWithActions(self, idx, lat, lon, height_ellipsoidal, polygon_id):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
@@ -210,6 +219,7 @@ class BuildWaylinesWPML:
 
         self.folder.append(placemark)
 
+    # -------------------------------------------------------------------------
     def saveNewWPML(self):
         # Reopen, beautify it, and save it
         pretty_xml_str = self.beautify_xml()
@@ -223,6 +233,7 @@ class BuildWaylinesWPML:
         with open(wpml_path, 'w', encoding='utf-8') as file:
             file.write(pretty_xml_str)
 
+    # -------------------------------------------------------------------------
     def beautify_xml(self):
 
         # Convert the XML tree to a string

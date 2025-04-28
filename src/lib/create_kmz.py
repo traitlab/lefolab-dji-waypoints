@@ -6,7 +6,10 @@ from pathlib import Path
 from lib.config import config
 
 
+
+# -----------------------------------------------------------------------------
 class CreateKMZ:
+    # -------------------------------------------------------------------------
     def __init__(self):
         # File paths
         # Get current datetime
@@ -19,6 +22,7 @@ class CreateKMZ:
             current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")            
             self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}_{current_datetime}.kmz"
 
+    # -------------------------------------------------------------------------
     def create_kmz(self):
         # Create the KMZ file
         with zipfile.ZipFile(self.kmz_file_path, 'w', zipfile.ZIP_DEFLATED) as kmz:
