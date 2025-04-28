@@ -41,5 +41,7 @@ class Config(BaseModel):
     waylines_placemark_no_action: FilePath = './config/waylines_placemark_no_action.json'
     waylines_placemark_with_actions: FilePath = './config/waylines_placemark_with_actions.json'
 
+    test_mode: bool = False
+
     class Config:
         arbitrary_types_allowed = True

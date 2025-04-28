@@ -12,11 +12,14 @@ class CreateKMZ:
         # Get current datetime
         current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")
         self.wpmz_dir = Path(config.base_path) / config.base_name / f"wpmz"
-        self.kmz_file_path = Path(
-            config.base_path) / config.base_name / f"{config.base_name}_{current_datetime}.kmz"
+        
+        # Use datetime in filename only if not in test mode
+        if config.test_mode:
+            self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}.kmz"
+        else:
+            self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}_{current_datetime}.kmz"
 
     def create_kmz(self):
-
         # Create the KMZ file
         with zipfile.ZipFile(self.kmz_file_path, 'w', zipfile.ZIP_DEFLATED) as kmz:
             for folder_name, _, filenames in os.walk(self.wpmz_dir):
