@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
 import yaml
 
@@ -23,7 +24,7 @@ parser = argparse.ArgumentParser(
     description='Generate the KMZ from a list of coordinates (lat, lon, elevation) in a CSV file.')
 parser.add_argument('--config', required=False,
                     help='Path to the configuration file')
-parser.add_argument('--flight_height', '-ft', type=float, required=False,
+parser.add_argument('--flight_height', '-fh', type=float, required=False,
                     help='Flight height in meters')
 parser.add_argument('--takeoff_point_elevation', '-tpe', type=float, required=False,
                     help='Takeoff point elevation in meters')
@@ -35,8 +36,8 @@ parser.add_argument('--output', '-o', type=str, default='./output',
                     help='Output directory path (default: ./output)')
 parser.add_argument('--csv', '-c', type=str, required=False,
                     help='Path to the input CSV file containing waypoints')
-parser.add_argument('--test', '-t', action='store_true',
-                    help='Run in test mode (default: False)')
+parser.add_argument('--debug', '-d', action='store_true',
+                    help='Run in debug mode (default: False)')
 
 args = parser.parse_args()
 
@@ -53,8 +54,11 @@ if args.csv and (args.flight_height is None or args.takeoff_point_elevation is N
 # Create config object
 if args.config:
     config = load_config(args.config)
-    config.test_mode = args.test
+    config.debug_mode = args.debug
 else:
+    # Get base_name from CSV file path
+    base_name = Path(args.csv).stem  # Get filename without extension
+    
     # Create a default Config object with command line values
     config = Config(
         flight_height=args.flight_height,
@@ -62,6 +66,7 @@ else:
         point_dsm_height_approach=args.point_dsm_height_approach,
         point_dsm_height_buffer=args.point_dsm_height_buffer,
         base_path=args.output,
+        base_name=base_name,
         points_csv_file_path=args.csv,
-        test_mode=args.test
+        debug_mode=args.debug
     )

@@ -2,26 +2,67 @@
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Python Debugger: Current File",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${file}",
-        "console": "integratedTerminal"
-      },
-      {
-        "name": "Python Debugger: main.py with config",
-        "type": "debugpy",
-        "request": "launch",
-        "program": "${workspaceFolder}/src/main.py",
-        "console": "integratedTerminal",
-        "args": [
-          "--config",
-          "${workspaceFolder}/config/settings.yaml"
-        ]
-      }
-    ]
-  }
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python Debugger: main.py with config",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/main.py",
+      "console": "integratedTerminal",
+      "args": [
+        "--config",
+        "${workspaceFolder}/config/settings.yaml"
+      ]
+    },
+    {
+      "name": "Python Debugger: main.py with manual flight options (long options)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/main.py",
+      "console": "integratedTerminal",
+      "args": [
+        "--flight_height",
+        "400",
+        "--takeoff_point_elevation",
+        "331",
+        "--point_dsm_height_approach",
+        "5",
+        "--point_dsm_height_buffer",
+        "10",
+        "--output",
+        "/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1",
+        "--csv",
+        "/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.csv"
+      ]
+    },
+    {
+      "name": "Python Debugger: main.py with manual flight options (short options)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/main.py",
+      "console": "integratedTerminal",
+      "args": [
+        "-fh",
+        "400",
+        "-tpe",
+        "331",
+        "-pdha",
+        "5",
+        "-pdhb",
+        "10",
+        "-o",
+        "/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1",
+        "-c",
+        "/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.csv"
+      ]
+    }
+  ]
+}

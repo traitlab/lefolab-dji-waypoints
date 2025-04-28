@@ -61,36 +61,30 @@ cp ~/Downloads/20240529_sblz1z2_p1_dsm_highdis.cog.tif /data/xprize/20240529_sbl
 
 # Run
 
+## Using --config option
+
 ```bash
 cd /app/lefolab-dji-waypoints
 source /app/lefolab-dji-waypoints/.venv/bin/activate
 python /app/lefolab-dji-waypoints/src/main.py --config /app/lefolab-dji-waypoints/config/settings@lefotitan_20240529_sblz1z2_p1.yaml
 ```
+
+## Using --csv option
+
+```bash
+cd /app/lefolab-dji-waypoints
+source /app/lefolab-dji-waypoints/.venv/bin/activate
+python /app/lefolab-dji-waypoints/src/main.py --flight_height 400 --takeoff_point_elevation 331 --point_dsm_height_approach 5 --point_dsm_height_buffer 10 --output /mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1 --csv /mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.csv
+```
+
 # Results 
 
 Generated files (KMZ, wpmz/template.kml, wpmz/waylines.wpml) are located in :
-`/app/lefolab-dji-waypoints/output/`
+`/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1`
 
+The CSV basename is used as the KMZ filename
 
-# Command line : 
+## Debug mode
 
---flight_height -ft 400 --takeoff_point_elevation -tpe 331 --point_dsm_height_approach -pdha 5 --point_dsm_height_buffer -pdhb 10 --ouput '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize' --csv '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv' 
+Using option `--debug (-d)` will add the datetime to the kmz file (`20240529_sblz1z2_p1_20250428T161738.kmz`)
 
-mission = csv basename (20240529_sblz1z2_p1)
-output path : /mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize
-output name : 20240529_sblz1z2_p1.kmz (overwrite)
-
-```bash
-flight_height: 400
-takeoff_point_elevation: 331
-# <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
-# conversion GPSh NRCAN.GC.CA
-point_dsm_height_approach: 5
-point_dsm_height_buffer: 10
-# buffer is added to the flight height
-# it's also used to add a buffer to the height above the tree for the picture
-
-base_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize'
-base_name: '20240529_sblz1z2_p1'
-points_csv_file_path: '/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
-```
