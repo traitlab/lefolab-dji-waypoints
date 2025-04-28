@@ -80,7 +80,7 @@ mission = csv basename (20240529_sblz1z2_p1)
 output path : /mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize
 output name : 20240529_sblz1z2_p1.kmz (overwrite)
 
-```
+```bash
 flight_height: 400
 takeoff_point_elevation: 331
 # <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
