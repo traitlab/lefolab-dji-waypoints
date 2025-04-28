@@ -17,6 +17,9 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.0 vincent.lefalher@umontreal.ca 20250428
+- new release with multiple changes
+
 0.1.7 vincent.lefalher@umontreal.ca 20250428
 - added README comments and features
 
