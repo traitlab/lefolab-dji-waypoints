@@ -10,13 +10,13 @@ class CreateKMZ:
     def __init__(self):
         # File paths
         # Get current datetime
-        current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")
         self.wpmz_dir = Path(config.base_path) / config.base_name / f"wpmz"
         
         # Use datetime in filename only if not in test mode
         if config.test_mode:
             self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}.kmz"
         else:
+            current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")            
             self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}_{current_datetime}.kmz"
 
     def create_kmz(self):
