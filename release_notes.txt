@@ -1,5 +1,24 @@
+Features / TODO : 
+
+- Ajuster la hauteur de retour entre chaque photo en fonction du DSM (quelle technique employer pour optimiser le vol? Escalier? Hauteur max entre les 2 points?)
+- Ajuster la hauteur de vol selon hauteur ellips et non en fonction du point de décollage
+- Switch de l'ordre des photos Zoom-Wide
+- S'assurer d'une orientation constante pour les photos wide et zoom (toujours vers le nord)
+- Changer les buffers selon le centroide vs le polygone
+- Protocole de sélection des arbres pour missions zoom
+ - petits arbres, polygone arbre non conventionnel, etc
+- Compatibilité avec FlightHub
+- mettre caméra grand angle à environ 45 degrés (angle à déterminer) quand le drone voyage entre les arbres pour qu’on voit bien l’approche du drone entre les arbres
+- Repositionner à -90 quand le drone arrive au dessus de l’arbre
+- Garder à -90 jusqu’à ce que le drone remonte au même point au dessus de l’arbre (soit juste avant de bouger à l’autre arbre)
+- Existe t il une option (p-e juste dans SDK?) pour utiliser le mode vision pour naviguer entre les arbres? Par exemple le mode smart RTH qui utilise le path le plus efficace…
+- On dirait aussi que la vitesse d’approche finale de l’arbre est un peu trop rapide (approche entre 16 m et 6 m quand on utilise buffer de 10 m)
+
 Issues
 - No know issues
+
+0.1.7 vincent.lefalher@umontreal.ca 20250428
+- added README comments and features
 
 0.1.6 vincent.lefalher@umontreal.ca 20240731
 - update settings files; add lefotitan settings
