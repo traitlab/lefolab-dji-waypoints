@@ -35,9 +35,6 @@
       <wpml:gimbalPitchMode>manual</wpml:gimbalPitchMode>
       <wpml:globalWaypointHeadingParam>
         <wpml:waypointHeadingMode>followWayline</wpml:waypointHeadingMode>
-        <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
-        <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
-        <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
       </wpml:globalWaypointHeadingParam>
       <wpml:globalWaypointTurnMode>toPointAndStopWithDiscontinuityCurvature</wpml:globalWaypointTurnMode>
       <wpml:globalUseStraightLine>1</wpml:globalUseStraightLine>
@@ -52,7 +49,7 @@
         <wpml:height>399.433959960938</wpml:height>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
-          <wpml:waypointTurnDampingDist>0.200000002980232</wpml:waypointTurnDampingDist>
+          <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
         </wpml:waypointTurnParam>
         <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
         <wpml:useGlobalHeadingParam>1</wpml:useGlobalHeadingParam>
@@ -69,16 +66,9 @@
         <wpml:ellipsoidHeight>366.270568847656</wpml:ellipsoidHeight>
         <wpml:height>399.033416748047</wpml:height>
         <wpml:waypointSpeed>5</wpml:waypointSpeed>
-        <wpml:waypointHeadingParam>
-          <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
-          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
-          <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
-          <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
-          <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
-        </wpml:waypointHeadingParam>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
-          <wpml:waypointTurnDampingDist>0.200000002980232</wpml:waypointTurnDampingDist>
+          <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
         </wpml:waypointTurnParam>
         <wpml:useStraightLine>1</wpml:useStraightLine>
         <wpml:isRisky>0</wpml:isRisky>
@@ -93,16 +83,9 @@
         <wpml:ellipsoidHeight>342.170562744141</wpml:ellipsoidHeight>
         <wpml:height>374.933410644531</wpml:height>
         <wpml:waypointSpeed>5</wpml:waypointSpeed>
-        <wpml:waypointHeadingParam>
-          <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
-          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
-          <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
-          <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
-          <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
-        </wpml:waypointHeadingParam>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
-          <wpml:waypointTurnDampingDist>0.200000002980232</wpml:waypointTurnDampingDist>
+          <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
         </wpml:waypointTurnParam>
         <wpml:useStraightLine>1</wpml:useStraightLine>
         <wpml:isRisky>0</wpml:isRisky>
@@ -239,16 +222,9 @@
         <wpml:index>4</wpml:index>
         <wpml:ellipsoidHeight>366.670562744141</wpml:ellipsoidHeight>
         <wpml:height>399.433410644531</wpml:height>
-        <wpml:waypointHeadingParam>
-          <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
-          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
-          <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
-          <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
-          <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
-        </wpml:waypointHeadingParam>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
-          <wpml:waypointTurnDampingDist>0.200000002980232</wpml:waypointTurnDampingDist>
+          <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
         </wpml:waypointTurnParam>
         <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
         <wpml:useStraightLine>1</wpml:useStraightLine>

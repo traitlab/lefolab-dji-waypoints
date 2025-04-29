@@ -17,6 +17,9 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.3 vincent.lefalher@umontreal.ca 20250429
+- Set the waypointHeadingMode to smoothTransition to north for photos. And then followWayline for all the other points (no photo). 
+
 0.2.2 vincent.lefalher@umontreal.ca 20250428
 - multiple updates
 
