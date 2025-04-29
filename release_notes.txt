@@ -17,6 +17,9 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.2 vincent.lefalher@umontreal.ca 20250428
+- multiple updates
+
 0.2.1 vincent.lefalher@umontreal.ca 20250428
 - add command line options
 - save template.kml and waylines.wpml under wpmz folder
