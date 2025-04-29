@@ -65,7 +65,7 @@
         <wpml:index>1</wpml:index>
         <wpml:ellipsoidHeight>366.270568847656</wpml:ellipsoidHeight>
         <wpml:height>399.033416748047</wpml:height>
-        <wpml:waypointSpeed>5</wpml:waypointSpeed>
+        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
@@ -82,7 +82,7 @@
         <wpml:index>2</wpml:index>
         <wpml:ellipsoidHeight>342.170562744141</wpml:ellipsoidHeight>
         <wpml:height>374.933410644531</wpml:height>
-        <wpml:waypointSpeed>5</wpml:waypointSpeed>
+        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
@@ -126,19 +126,27 @@
           </wpml:action>
           <wpml:action>
             <wpml:actionId>1</wpml:actionId>
-            <wpml:actionActuatorFunc>focus</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFunc>zoom</wpml:actionActuatorFunc>
             <wpml:actionActuatorFuncParam>
               <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:isPointFocus>1</wpml:isPointFocus>
-              <wpml:focusX>0</wpml:focusX>
-              <wpml:focusY>0</wpml:focusY>
-              <wpml:focusRegionWidth>0</wpml:focusRegionWidth>
-              <wpml:focusRegionHeight>0</wpml:focusRegionHeight>
-              <wpml:isInfiniteFocus>0</wpml:isInfiniteFocus>
+              <wpml:focalLength>168</wpml:focalLength>
             </wpml:actionActuatorFuncParam>
           </wpml:action>
           <wpml:action>
             <wpml:actionId>2</wpml:actionId>
+            <wpml:actionActuatorFunc>focus</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFuncParam>
+              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
+              <wpml:isPointFocus>0</wpml:isPointFocus>
+              <wpml:focusX>0.25</wpml:focusX>
+              <wpml:focusY>0.25</wpml:focusY>
+              <wpml:focusRegionWidth>0.5</wpml:focusRegionWidth>
+              <wpml:focusRegionHeight>0.5</wpml:focusRegionHeight>
+              <wpml:isInfiniteFocus>0</wpml:isInfiniteFocus>
+            </wpml:actionActuatorFuncParam>
+          </wpml:action>
+          <wpml:action>
+            <wpml:actionId>3</wpml:actionId>
             <wpml:actionActuatorFunc>orientedShoot</wpml:actionActuatorFunc>
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalPitchRotateAngle>-90</wpml:gimbalPitchRotateAngle>
@@ -165,23 +173,32 @@
               <wpml:orientedFileSize>0</wpml:orientedFileSize>
               <wpml:orientedFileSuffix>Waypoint4</wpml:orientedFileSuffix>
               <wpml:orientedPhotoMode>normalPhoto</wpml:orientedPhotoMode>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
-          <wpml:action>
-            <wpml:actionId>3</wpml:actionId>
-            <wpml:actionActuatorFunc>focus</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:isPointFocus>1</wpml:isPointFocus>
-              <wpml:focusX>0</wpml:focusX>
-              <wpml:focusY>0</wpml:focusY>
-              <wpml:focusRegionWidth>0</wpml:focusRegionWidth>
-              <wpml:focusRegionHeight>0</wpml:focusRegionHeight>
-              <wpml:isInfiniteFocus>1</wpml:isInfiniteFocus>
+              <wpml:orientedCameraShutterTime>0.00625</wpml:orientedCameraShutterTime>
             </wpml:actionActuatorFuncParam>
           </wpml:action>
           <wpml:action>
             <wpml:actionId>4</wpml:actionId>
+            <wpml:actionActuatorFunc>zoom</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFuncParam>
+              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
+              <wpml:focalLength>24</wpml:focalLength>
+            </wpml:actionActuatorFuncParam>
+          </wpml:action>
+          <wpml:action>
+            <wpml:actionId>5</wpml:actionId>
+            <wpml:actionActuatorFunc>focus</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFuncParam>
+              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
+              <wpml:isPointFocus>0</wpml:isPointFocus>
+              <wpml:focusX>0.25</wpml:focusX>
+              <wpml:focusY>0.25</wpml:focusY>
+              <wpml:focusRegionWidth>0.5</wpml:focusRegionWidth>
+              <wpml:focusRegionHeight>0.5</wpml:focusRegionHeight>
+              <wpml:isInfiniteFocus>1</wpml:isInfiniteFocus>
+            </wpml:actionActuatorFuncParam>
+          </wpml:action>
+          <wpml:action>
+            <wpml:actionId>6</wpml:actionId>
             <wpml:actionActuatorFunc>orientedShoot</wpml:actionActuatorFunc>
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalPitchRotateAngle>-90</wpml:gimbalPitchRotateAngle>
@@ -208,6 +225,7 @@
               <wpml:orientedFileSize>0</wpml:orientedFileSize>
               <wpml:orientedFileSuffix>Waypoint4</wpml:orientedFileSuffix>
               <wpml:orientedPhotoMode>normalPhoto</wpml:orientedPhotoMode>
+              <wpml:orientedCameraShutterTime>0.00625</wpml:orientedCameraShutterTime>
             </wpml:actionActuatorFuncParam>
           </wpml:action>
         </wpml:actionGroup>

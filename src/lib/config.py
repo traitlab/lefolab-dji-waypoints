@@ -29,8 +29,8 @@ parser.add_argument('--flight_height', '-fh', type=float, required=False,
                     help='Flight height in meters')
 parser.add_argument('--takeoff_point_elevation', '-tpe', type=float, required=False,
                     help='Takeoff point elevation in meters')
-parser.add_argument('--point_dsm_height_approach', '-pdha', type=float, default=5.0,
-                    help='Point DSM height approach in meters (default: 5)')
+parser.add_argument('--point_dsm_height_approach', '-pdha', type=float, default=10,
+                    help='Point DSM height approach in meters (default: 10)')
 parser.add_argument('--point_dsm_height_buffer', '-pdhb', type=float, default=6,
                     help='Point DSM height buffer in meters (default: 6)')
 parser.add_argument('--output', '-o', type=str, default='./output',
