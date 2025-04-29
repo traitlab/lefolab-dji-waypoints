@@ -29,8 +29,8 @@
         <wpml:heightMode>EGM96</wpml:heightMode>
         <wpml:positioningType>RTKBaseStation</wpml:positioningType>
       </wpml:waylineCoordinateSysParam>
-      <wpml:autoFlightSpeed>5</wpml:autoFlightSpeed>
-      <wpml:globalHeight>100</wpml:globalHeight>
+      <wpml:autoFlightSpeed>15</wpml:autoFlightSpeed>
+      <wpml:globalHeight>0</wpml:globalHeight>
       <wpml:caliFlightEnable>0</wpml:caliFlightEnable>
       <wpml:gimbalPitchMode>manual</wpml:gimbalPitchMode>
       <wpml:globalWaypointHeadingParam>
@@ -116,7 +116,7 @@
         <wpml:index>3</wpml:index>
         <wpml:ellipsoidHeight>336.170562744141</wpml:ellipsoidHeight>
         <wpml:height>368.933441162109</wpml:height>
-        <wpml:waypointSpeed>5</wpml:waypointSpeed>
+        <wpml:waypointSpeed>1</wpml:waypointSpeed>
         <wpml:waypointHeadingParam>
           <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
           <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
@@ -227,23 +227,6 @@
               <wpml:orientedPhotoMode>normalPhoto</wpml:orientedPhotoMode>
             </wpml:actionActuatorFuncParam>
           </wpml:action>
-          <wpml:action>
-            <wpml:actionId>5</wpml:actionId>
-            <wpml:actionActuatorFunc>gimbalRotate</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:gimbalHeadingYawBase>north</wpml:gimbalHeadingYawBase>
-              <wpml:gimbalRotateMode>absoluteAngle</wpml:gimbalRotateMode>
-              <wpml:gimbalPitchRotateEnable>1</wpml:gimbalPitchRotateEnable>
-              <wpml:gimbalPitchRotateAngle>-10</wpml:gimbalPitchRotateAngle>
-              <wpml:gimbalRollRotateEnable>1</wpml:gimbalRollRotateEnable>
-              <wpml:gimbalRollRotateAngle>0</wpml:gimbalRollRotateAngle>
-              <wpml:gimbalYawRotateEnable>1</wpml:gimbalYawRotateEnable>
-              <wpml:gimbalYawRotateAngle>0</wpml:gimbalYawRotateAngle>
-              <wpml:gimbalRotateTimeEnable>1</wpml:gimbalRotateTimeEnable>
-              <wpml:gimbalRotateTime>5</wpml:gimbalRotateTime>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
         </wpml:actionGroup>
         <wpml:isRisky>0</wpml:isRisky>
       </Placemark>
@@ -269,6 +252,20 @@
         </wpml:waypointTurnParam>
         <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
         <wpml:useStraightLine>1</wpml:useStraightLine>
+        <wpml:actionGroup>
+          <wpml:action>
+            <wpml:actionId>0</wpml:actionId>
+            <wpml:actionActuatorFunc>gimbalRotate</wpml:actionActuatorFunc>
+            <wpml:actionActuatorFuncParam>
+              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
+              <wpml:gimbalHeadingYawBase>north</wpml:gimbalHeadingYawBase>
+              <wpml:gimbalRotateMode>absoluteAngle</wpml:gimbalRotateMode>
+              <wpml:gimbalPitchRotateAngle>-10</wpml:gimbalPitchRotateAngle>
+              <wpml:gimbalRollRotateAngle>0</wpml:gimbalRollRotateAngle>
+              <wpml:gimbalYawRotateAngle>0</wpml:gimbalYawRotateAngle>
+            </wpml:actionActuatorFuncParam>
+          </wpml:action>
+        </wpml:actionGroup>
         <wpml:isRisky>0</wpml:isRisky>
       </Placemark>
       <wpml:payloadParam>
