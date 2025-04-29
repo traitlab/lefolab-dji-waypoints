@@ -35,6 +35,9 @@
       <wpml:gimbalPitchMode>manual</wpml:gimbalPitchMode>
       <wpml:globalWaypointHeadingParam>
         <wpml:waypointHeadingMode>followWayline</wpml:waypointHeadingMode>
+        <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
+        <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
+        <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
       </wpml:globalWaypointHeadingParam>
       <wpml:globalWaypointTurnMode>toPointAndStopWithDiscontinuityCurvature</wpml:globalWaypointTurnMode>
       <wpml:globalUseStraightLine>1</wpml:globalUseStraightLine>
@@ -65,7 +68,14 @@
         <wpml:index>1</wpml:index>
         <wpml:ellipsoidHeight>366.270568847656</wpml:ellipsoidHeight>
         <wpml:height>399.033416748047</wpml:height>
-        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
+        <wpml:waypointSpeed>15</wpml:waypointSpeed>
+        <wpml:waypointHeadingParam>
+          <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
+          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
+          <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
+          <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
+          <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
+        </wpml:waypointHeadingParam>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
@@ -82,7 +92,14 @@
         <wpml:index>2</wpml:index>
         <wpml:ellipsoidHeight>342.170562744141</wpml:ellipsoidHeight>
         <wpml:height>374.933410644531</wpml:height>
-        <wpml:useGlobalSpeed>1</wpml:useGlobalSpeed>
+        <wpml:waypointSpeed>1</wpml:waypointSpeed>
+        <wpml:waypointHeadingParam>
+          <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
+          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
+          <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
+          <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
+          <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
+        </wpml:waypointHeadingParam>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>
@@ -99,7 +116,7 @@
         <wpml:index>3</wpml:index>
         <wpml:ellipsoidHeight>336.170562744141</wpml:ellipsoidHeight>
         <wpml:height>368.933441162109</wpml:height>
-        <wpml:waypointSpeed>1</wpml:waypointSpeed>
+        <wpml:waypointSpeed>15</wpml:waypointSpeed>
         <wpml:waypointHeadingParam>
           <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
           <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
@@ -119,34 +136,6 @@
           </wpml:actionTrigger>
           <wpml:action>
             <wpml:actionId>0</wpml:actionId>
-            <wpml:actionActuatorFunc>hover</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:hoverTime>5</wpml:hoverTime>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
-          <wpml:action>
-            <wpml:actionId>1</wpml:actionId>
-            <wpml:actionActuatorFunc>zoom</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:focalLength>168</wpml:focalLength>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
-          <wpml:action>
-            <wpml:actionId>2</wpml:actionId>
-            <wpml:actionActuatorFunc>focus</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:isPointFocus>0</wpml:isPointFocus>
-              <wpml:focusX>0.25</wpml:focusX>
-              <wpml:focusY>0.25</wpml:focusY>
-              <wpml:focusRegionWidth>0.5</wpml:focusRegionWidth>
-              <wpml:focusRegionHeight>0.5</wpml:focusRegionHeight>
-              <wpml:isInfiniteFocus>0</wpml:isInfiniteFocus>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
-          <wpml:action>
-            <wpml:actionId>3</wpml:actionId>
             <wpml:actionActuatorFunc>orientedShoot</wpml:actionActuatorFunc>
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalPitchRotateAngle>-90</wpml:gimbalPitchRotateAngle>
@@ -177,28 +166,7 @@
             </wpml:actionActuatorFuncParam>
           </wpml:action>
           <wpml:action>
-            <wpml:actionId>4</wpml:actionId>
-            <wpml:actionActuatorFunc>zoom</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:focalLength>24</wpml:focalLength>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
-          <wpml:action>
-            <wpml:actionId>5</wpml:actionId>
-            <wpml:actionActuatorFunc>focus</wpml:actionActuatorFunc>
-            <wpml:actionActuatorFuncParam>
-              <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
-              <wpml:isPointFocus>0</wpml:isPointFocus>
-              <wpml:focusX>0.25</wpml:focusX>
-              <wpml:focusY>0.25</wpml:focusY>
-              <wpml:focusRegionWidth>0.5</wpml:focusRegionWidth>
-              <wpml:focusRegionHeight>0.5</wpml:focusRegionHeight>
-              <wpml:isInfiniteFocus>1</wpml:isInfiniteFocus>
-            </wpml:actionActuatorFuncParam>
-          </wpml:action>
-          <wpml:action>
-            <wpml:actionId>6</wpml:actionId>
+            <wpml:actionId>1</wpml:actionId>
             <wpml:actionActuatorFunc>orientedShoot</wpml:actionActuatorFunc>
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalPitchRotateAngle>-90</wpml:gimbalPitchRotateAngle>
@@ -240,6 +208,13 @@
         <wpml:index>4</wpml:index>
         <wpml:ellipsoidHeight>366.670562744141</wpml:ellipsoidHeight>
         <wpml:height>399.433410644531</wpml:height>
+        <wpml:waypointHeadingParam>
+          <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
+          <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>
+          <wpml:waypointPoiPoint>0.000000,0.000000,0.000000</wpml:waypointPoiPoint>
+          <wpml:waypointHeadingPathMode>followBadArc</wpml:waypointHeadingPathMode>
+          <wpml:waypointHeadingPoiIndex>0</wpml:waypointHeadingPoiIndex>
+        </wpml:waypointHeadingParam>
         <wpml:waypointTurnParam>
           <wpml:waypointTurnMode>toPointAndPassWithContinuityCurvature</wpml:waypointTurnMode>
           <wpml:waypointTurnDampingDist>0</wpml:waypointTurnDampingDist>

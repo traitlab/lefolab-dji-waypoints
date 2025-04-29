@@ -17,10 +17,16 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.5 vincent.lefalher@umontreal.ca 20250429
+- reset waypointHeadingParam as before (smoothTransition)
+- removed hover zoom focus
+- use waypointSpeed 15 (vs useGlobalSpeed 1)
+- use waypointSpeed 1 point 3 (bfr orientedShoot)
+
 0.2.4 vincent.lefalher@umontreal.ca 20250429
 - orientedCameraShutterTime 0.00625 1/160
 - useGlobalSpeed
-- action zoom + focus 
+- action zoom + focus + hover
 
 0.2.3 vincent.lefalher@umontreal.ca 20250429
 - Set the waypointHeadingMode to smoothTransition to north for photos. And then followWayline for all the other points (no photo). 
