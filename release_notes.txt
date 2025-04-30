@@ -22,6 +22,9 @@ Issues
 - removed hover zoom focus
 - use waypointSpeed 15 (vs useGlobalSpeed 1)
 - use waypointSpeed 1 point 3 (bfr orientedShoot)
+- fix toPointAndPassWithContinuityCurvature by toPointAndStopWithDiscontinuityCurvature
+- remove waypointHeadingMode smoothTransition except on the placemark before the photos to have the position to the north; globalWaypointHeadingParam is waypointHeadingMode followWayline
+- fix actionGroup on the last placeMark for the action gimbalRotate 
 
 0.2.4 vincent.lefalher@umontreal.ca 20250429
 - orientedCameraShutterTime 0.00625 1/160
