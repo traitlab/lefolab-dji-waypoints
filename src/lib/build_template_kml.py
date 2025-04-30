@@ -173,9 +173,9 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_use_global_turn_param.text = self.stop_use_global_turn_param
 
-        wpml_gimbal_pitch_angle = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
-        wpml_gimbal_pitch_angle.text = self.stop_gimbal_pitch_angle
+        # wpml_gimbal_pitch_angle = ET.SubElement(
+        #     placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
+        # wpml_gimbal_pitch_angle.text = self.stop_gimbal_pitch_angle
 
         wpml_use_straight_line = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
@@ -307,9 +307,9 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_useGlobalTurnParam.text = self.use_global_turn_param
 
-        wpml_gimbalPitchAngle = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
-        wpml_gimbalPitchAngle.text = self.gimbal_pitch_angle
+        # wpml_gimbalPitchAngle = ET.SubElement(
+        #     placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
+        # wpml_gimbalPitchAngle.text = self.gimbal_pitch_angle
 
         wpml_useStraightLine = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
