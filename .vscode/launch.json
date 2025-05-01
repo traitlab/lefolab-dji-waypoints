@@ -9,7 +9,8 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${file}",
-      "console": "integratedTerminal"
+      "console": "integratedTerminal",
+      // "pythonPath": "${workspaceFolder}/.venv/bin/python"
     },
     {
       "name": "Python Debugger: main.py with config",
@@ -36,7 +37,7 @@
         "--output",
         "${workspaceFolder}/test/output",
         "-csv",
-        "${workspaceFolder}/test/input/test_one_wpt.csv"
+        "${workspaceFolder}/test/input/20240701_sblz3_p1_rgb_gr0p07_subsample_infer_wpt.csv"
       ]
     },
     {
@@ -53,7 +54,7 @@
         "-o",
         "${workspaceFolder}/test/output",
         "-c",
-        "${workspaceFolder}/test/input/test_one_wpt.csv"
+        "${workspaceFolder}/test/input/20240701_sblz3_p1_rgb_gr0p07_subsample_infer_wpt.csv"
       ]
     }
   ]

@@ -7,6 +7,7 @@ from xml.dom.minidom import parseString
 
 from lib.config import config
 
+from lib.WGS84toEGM96 import download_egm96, transform_to_egm96
 
 class BuildTemplateKML:
 
@@ -20,25 +21,17 @@ class BuildTemplateKML:
         self.stop_use_global_speed = '1'
         self.stop_use_global_heading_param = '1'
         self.stop_use_global_turn_param = '1'
-        self.stop_gimbal_pitch_angle = '-90'
         self.stop_use_straight_line = '0'
         self.stop_is_risky = '0'
 
         # Variables for common values
-        # self.ellipsoid_height = '380.736267089844' # read from the CSV
-        # self.waypoint_speed = '5'
-        # self.waypoint_heading_mode = 'fixed'
-        # self.waypoint_heading_angle = '-52'
-        # self.waypoint_poi_point = '0.000000,0.000000,0.000000'
-        # self.waypoint_heading_path_mode = 'followBadArc'
-        # self.waypoint_heading_poi_index = '0'
         self.use_global_speed = '1'
         self.use_global_heading_param = '1'
         self.use_global_turn_param = '1'
         self.gimbal_pitch_angle = '-90'
         self.use_straight_line = '0'
 
-        self.wpml_waypointSpeed = '1'
+        self.wpml_waypointSpeed = '3'
         self.waypoint_heading_mode = 'smoothTransition'
         self.waypoint_heading_angle = '0'
         self.waypoint_poi_point = '0.000000,0.000000,0.000000'
@@ -55,34 +48,39 @@ class BuildTemplateKML:
         self.action_actuator_func = 'orientedShoot'
         self.gimbal_pitch_rotate_angle = '-90'
         self.gimbal_roll_rotate_angle = '0'
-        self.gimbal_yaw_rotate_angle = '-52.6846771240234'
+        self.gimbal_yaw_rotate_angle = '0'
         self.focus_x = '0'
         self.focus_y = '0'
         self.focus_region_width = '0'
         self.focus_region_height = '0'
-        # self.focal_length = '24'
-        self.aircraft_heading = '-52'
+
+        self.gimbalRotateMode = 'absoluteAngle'
+        self.gimbalPitchRotateEnable = '1'
+        self.gimbalPitchRotateAngle = '-90'
+        self.gimbalRollRotateEnable = '0'
+        self.gimbalRollRotateAngle = '0'
+        self.gimbalYawRotateEnable = '0'
+        self.gimbalYawRotateAngle = '0'
+        self.gimbalRotateTimeEnable = '0'
+        self.gimbalRotateTime = '0'
+        self.payloadPositionIndex = '0'
+
+        self.aircraft_heading = '0'
         self.accurate_frame_valid = '0'
         self.payload_position_index = '0'
         self.use_global_payload_lens_index = '0'
         self.target_angle = '0'
-        # self.action_uuid = 'b67be2ca-9735-40bc-ab94-e9e01601e114'
         self.image_width = '0'
         self.image_height = '0'
         self.af_pos = '0'
         self.gimbal_port = '0'
         self.oriented_camera_type = '67'
-        # self.oriented_file_path = '0c6f31bb-81bc-452d-904f-f15c5b92e330'
-        # self.oriented_file_md5 = ''
         self.oriented_file_size = '0'
-        # self.oriented_file_suffix = 'Waypoint1'
         self.orientedCameraShutterTime = '0.00625'
 
         self.oriented_photo_mode = 'normalPhoto'
-        # self.action_actuator_func2 = 'rotateYaw'
-        # self.aircraft_heading2 = '-51'
-        # self.aircraft_path_mode = 'counterClockwise'
         self.is_risky = '0'
+        
         # Define namespaces
         self.namespaces = {
             'kml': 'http://www.opengis.net/kml/2.2',
@@ -111,6 +109,10 @@ class BuildTemplateKML:
 
     # -------------------------------------------------------------------------
     def setup(self):
+        
+        # make sure to have the right transformation
+        download_egm96()
+
         # Read the coordinates from the CSV
         self.wpt_csv_properties = self.read_points_csv(
             config.points_csv_file_path, 'wpt')
@@ -151,28 +153,31 @@ class BuildTemplateKML:
         # Return to home altitude is also set on the drone remote by the pilote for the last point
 
         # Add new Placemark elements for each coordinate
+        actionGroupId = 0
         for idx, (lat_y, lon_x, wpt_elevation_from_dsm, polygon_id) in enumerate(self.wpt_csv_properties):
+            _, _, wpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, wpt_elevation_from_dsm)
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx][2]
+            _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
+
             index = idx * 4
-            height = str(float(cpt_elevation_from_dsm) +
-                  float(config.buffer) + float(config.approach))
+            actionGroupId = idx * 3
+            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index, lat_y, lon_x, height, polygon_id, '-90', idx, idx + 1)
+                index, lat_y, lon_x, height, polygon_id, '-90', actionGroupId, index)
             
-            height = str(float(wpt_elevation_from_dsm) +
-                  float(config.buffer) + float(config.approach))
+            height = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
                 index + 1, lat_y, lon_x, height, polygon_id)
 
-            height = str(float(wpt_elevation_from_dsm) - float(config.buffer))
+            height = str(float(wpt_ellips_height_egm96) + float(config.buffer))
             self.addTreePhotosPlacemark(
-                index + 2, lat_y, lon_x, height, polygon_id, idx + 1, idx + 2)
+                index + 2, lat_y, lon_x, height, polygon_id, actionGroupId + 1, index + 2)
             
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
-            height = str(float(cpt_elevation_from_dsm) +
-                  float(config.buffer) + float(config.approach))
+            _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
+            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index + 3, lat_y, lon_x, height, polygon_id, '-10', idx + 2, idx + 3)
+                index + 3, lat_y, lon_x, height, polygon_id, '-15', actionGroupId + 2, index + 3)
 
     # -------------------------------------------------------------------------
     def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, polygon_id, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
@@ -209,13 +214,15 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_use_global_turn_param.text = self.stop_use_global_turn_param
 
-        wpml_gimbal_pitch_angle = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
-        wpml_gimbal_pitch_angle.text = gimbalPitchRotateAngle
-
         wpml_use_straight_line = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
         wpml_use_straight_line.text = self.stop_use_straight_line
+
+        wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
+        placemark.append(wpml_actionGroup)
+
+        wpml_action = self.addPlacemarkActionGimbalRotate('0', gimbalPitchRotateAngle)
+        wpml_actionGroup.append(wpml_action)
 
         wpml_is_risky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
@@ -223,9 +230,6 @@ class BuildTemplateKML:
 
         ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = polygon_id
-
-        # wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
-        # placemark.append(wpml_actionGroup)
 
         self.folder.append(placemark)
 
@@ -316,9 +320,43 @@ class BuildTemplateKML:
             action_trigger, f'{{{self.namespaces["wpml"]}}}actionTriggerType').text = self.action_trigger_type
 
         return action_group
+    
+    # -------------------------------------------------------------------------
+    def addPlacemarkActionGimbalRotate(self, idx, gimbalPitchRotateAngle):
+        action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
+        ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionId').text = idx
+        ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionActuatorFunc').text = 'gimbalRotate'
+
+        action_actuator_func_param = ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRotateMode').text = self.gimbalRotateMode
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateEnable').text = self.gimbalPitchRotateEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateAngle').text = gimbalPitchRotateAngle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRollRotateEnable').text = self.gimbalRollRotateEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRollRotateAngle').text = self.gimbalRollRotateAngle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalYawRotateEnable').text = self.gimbalYawRotateEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalYawRotateAngle').text = self.gimbalYawRotateAngle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRotateTimeEnable').text = self.gimbalRotateTimeEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRotateTime').text = self.gimbalRotateTime
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}payloadPositionIndex').text = self.payloadPositionIndex
+
+        return action
+
 
     # -------------------------------------------------------------------------
-    def addPlacemarkOrientedShoot(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
+    def addPlacemarkActionOrientedShoot(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
         action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
         ET.SubElement(
             action, f'{{{self.namespaces["wpml"]}}}actionId').text = idx
@@ -405,17 +443,12 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
         wpml_useGlobalSpeed.text = self.use_global_speed
 
-        wpml_useGlobalHeadingParam = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
-        wpml_useGlobalHeadingParam.text = self.use_global_heading_param
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
+        placemark.append(wpml_waypointHeadingParam)
 
         wpml_useGlobalTurnParam = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_useGlobalTurnParam.text = self.use_global_turn_param
-
-        # wpml_gimbalPitchAngle = ET.SubElement(
-        #     placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
-        # wpml_gimbalPitchAngle.text = self.gimbal_pitch_angle
 
         wpml_useStraightLine = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
@@ -424,11 +457,11 @@ class BuildTemplateKML:
         wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
         placemark.append(wpml_actionGroup)
 
-        wpml_action = self.addPlacemarkOrientedShoot('1', '168', str(
+        wpml_action = self.addPlacemarkActionOrientedShoot('0', '168', str(
             polygon_id) + "zoom", '703556e4-81fb-4294-b607-05d5f748377f', '703556e4-81fb-4294-b607-05d5f748377f')
         wpml_actionGroup.append(wpml_action)
 
-        wpml_action = self.addPlacemarkOrientedShoot('0', '24', str(
+        wpml_action = self.addPlacemarkActionOrientedShoot('1', '24', str(
             polygon_id), '51ae7825-56de-41d3-90bb-3c9ed6de7960', '393e34ba-016e-4fd3-98bf-3f9fe0c517df')
         wpml_actionGroup.append(wpml_action)
 
