@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from xml.dom.minidom import parseString
@@ -12,7 +13,8 @@ class BuildTemplateKML:
     # -------------------------------------------------------------------------
     def __init__(self):
 
-        self.points_csv_properties = None
+        self.wpt_csv_properties = None
+        self.cpt_csv_properties = None
 
         # Stop placemark
         self.stop_use_global_speed = '1'
@@ -24,7 +26,6 @@ class BuildTemplateKML:
 
         # Variables for common values
         # self.ellipsoid_height = '380.736267089844' # read from the CSV
-        self.height = str(config.flight_height)  # '413.501159667969'
         # self.waypoint_speed = '5'
         # self.waypoint_heading_mode = 'fixed'
         # self.waypoint_heading_angle = '-52'
@@ -36,6 +37,13 @@ class BuildTemplateKML:
         self.use_global_turn_param = '1'
         self.gimbal_pitch_angle = '-90'
         self.use_straight_line = '0'
+
+        self.wpml_waypointSpeed = '1'
+        self.waypoint_heading_mode = 'smoothTransition'
+        self.waypoint_heading_angle = '0'
+        self.waypoint_poi_point = '0.000000,0.000000,0.000000'
+        self.waypoint_heading_path_mode = 'followBadArc'
+        self.waypoint_heading_poi_index = '0'
 
         self.action_group_id = '0'
         self.action_group_start_index = '0'
@@ -68,6 +76,8 @@ class BuildTemplateKML:
         # self.oriented_file_md5 = ''
         self.oriented_file_size = '0'
         # self.oriented_file_suffix = 'Waypoint1'
+        self.orientedCameraShutterTime = '0.00625'
+
         self.oriented_photo_mode = 'normalPhoto'
         # self.action_actuator_func2 = 'rotateYaw'
         # self.aircraft_heading2 = '-51'
@@ -80,16 +90,18 @@ class BuildTemplateKML:
         }
 
     # -------------------------------------------------------------------------
-    def read_points_csv(self, csv_file):
+    def read_points_csv(self, csv_file, type):
         properties = []
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                lon = row['lon_x']
-                lat = row['lat_y']
-                height_ellipsoidal = row['elevation_from_dsm']
+                if row['type'] != type :
+                  continue
+                lon_x = row['lon_x']
+                lat_y = row['lat_y']
+                elevation_from_dsm = row['elevation_from_dsm']
                 polygon_id = row['polygon_id']
-                properties.append((lat, lon, height_ellipsoidal, polygon_id))
+                properties.append((lat_y, lon_x, elevation_from_dsm, polygon_id))
 
         # Check if the first and last points are the same and remove the last point if they are
         if len(properties) > 1 and properties[0] == properties[-1]:
@@ -100,8 +112,22 @@ class BuildTemplateKML:
     # -------------------------------------------------------------------------
     def setup(self):
         # Read the coordinates from the CSV
-        self.points_csv_properties = self.read_points_csv(
-            config.points_csv_file_path)
+        self.wpt_csv_properties = self.read_points_csv(
+            config.points_csv_file_path, 'wpt')
+        self.cpt_csv_properties = self.read_points_csv(
+            config.points_csv_file_path, 'cpt')
+        if len(self.wpt_csv_properties) < 2:
+            self.cpt_csv_properties = self.wpt_csv_properties.copy()
+            self.cpt_csv_properties.append(list(self.cpt_csv_properties[-1]))
+            # sys.exit("Not enought wpt. Minimum of two wpt is supported. One wpt can be created directly using the drone remote.")
+        elif len(self.wpt_csv_properties) != len(self.cpt_csv_properties) + 1:
+            if len(self.wpt_csv_properties) > len(self.cpt_csv_properties) + 1:
+              sys.exit("Two many wpt or not enought cpt. Number of wpt must be one more than the number of cpt points.")
+            if len(self.wpt_csv_properties) < len(self.cpt_csv_properties) + 1:
+              sys.exit("Too many cpt or not enought wpt. Number of wpt must be one more than the number of cpt points.")
+        # Duplicate the first and last checkpoint property to make thing easier to handle the first and last waypoint 
+        self.cpt_csv_properties.insert(0, self.cpt_csv_properties[0][:])
+        self.cpt_csv_properties.append(list(self.cpt_csv_properties[-1]))
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
@@ -119,35 +145,45 @@ class BuildTemplateKML:
 
     # -------------------------------------------------------------------------
     def generate(self):
+        # Find the first checkpoint's elevation_from_dsm
+        # The first check point is either at the same height than the frist tree or higher. So it's ok to use it as the first point altitude to reach. 
+        # Safe takeoff altitude is set by the pilote (takeOffSecurityHeight is set to 100 in our templat_ye)  
+        # Return to home altitude is also set on the drone remote by the pilote for the last point
+
         # Add new Placemark elements for each coordinate
-        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
+        for idx, (lat_y, lon_x, wpt_elevation_from_dsm, polygon_id) in enumerate(self.wpt_csv_properties):
+            cpt_elevation_from_dsm = self.cpt_csv_properties[idx][2]
             index = idx * 4
-            height = str(
-                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
-            self.addPlacemarkStop(
-                index, lat, lon, height, polygon_id)
-            height = str(
-                (float(height_ellipsoidal) -
-                 float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
-            self.addPlacemarkStop(
-                index + 1, lat, lon, height, polygon_id)
-            self.addPlacemarkActions(
-                index + 2, lat, lon, height_ellipsoidal, polygon_id)
-            height = str(
-                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
-            self.addPlacemarkStop(
-                index + 3, lat, lon, height, polygon_id)
+            height = str(float(cpt_elevation_from_dsm) +
+                  float(config.buffer) + float(config.approach))
+            self.addTreeFirstLastPlacemark(
+                index, lat_y, lon_x, height, polygon_id, '-90', idx, idx + 1)
+            
+            height = str(float(wpt_elevation_from_dsm) +
+                  float(config.buffer) + float(config.approach))
+            self.addTreeApproachPlacemark(
+                index + 1, lat_y, lon_x, height, polygon_id)
+
+            height = str(float(wpt_elevation_from_dsm) - float(config.buffer))
+            self.addTreePhotosPlacemark(
+                index + 2, lat_y, lon_x, height, polygon_id, idx + 1, idx + 2)
+            
+            cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
+            height = str(float(cpt_elevation_from_dsm) +
+                  float(config.buffer) + float(config.approach))
+            self.addTreeFirstLastPlacemark(
+                index + 3, lat_y, lon_x, height, polygon_id, '-10', idx + 2, idx + 3)
 
     # -------------------------------------------------------------------------
-    def addPlacemarkStop(self, idx, lat, lon, height, polygon_id):
+    def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, polygon_id, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
         # Add new Placemark elements for each coordinate
-        # for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.csv_properties):
+        # for idx, (lat_y, lon_x, elevation_from_dsm, polygon_id) in enumerate(self.csv_properties):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
         coordinates_element = ET.SubElement(
             point, f'{{{self.namespaces["kml"]}}}coordinates')
-        coordinates_element.text = f'{lon},{lat}'
+        coordinates_element.text = f'{lon_x},{lat_y}'
 
         wpml_index = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}index')
@@ -173,9 +209,9 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
         wpml_use_global_turn_param.text = self.stop_use_global_turn_param
 
-        # wpml_gimbal_pitch_angle = ET.SubElement(
-        #     placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
-        # wpml_gimbal_pitch_angle.text = self.stop_gimbal_pitch_angle
+        wpml_gimbal_pitch_angle = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}gimbalPitchAngle')
+        wpml_gimbal_pitch_angle.text = gimbalPitchRotateAngle
 
         wpml_use_straight_line = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
@@ -188,17 +224,89 @@ class BuildTemplateKML:
         ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = polygon_id
 
+        # wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
+        # placemark.append(wpml_actionGroup)
+
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
-    def addPlacemarkActionGroup(self, index):
+    def addWaypointHeadingParam(self):
+      wpml_waypointHeadingParam = ET.Element(f'{{{self.namespaces["wpml"]}}}waypointHeadingParam')
+
+      wpml_waypointHeadingMode = ET.SubElement(
+          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingMode')
+      wpml_waypointHeadingMode.text = self.waypoint_heading_mode
+      wpml_waypointHeadingAngle = ET.SubElement(
+          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngle')
+      wpml_waypointHeadingAngle.text = self.waypoint_heading_angle
+      wpml_waypointPoiPoint = ET.SubElement(
+          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointPoiPoint')
+      wpml_waypointPoiPoint.text = self.waypoint_poi_point
+      wpml_waypointHeadingPathMode = ET.SubElement(
+          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPathMode')
+      wpml_waypointHeadingPathMode.text = self.waypoint_heading_path_mode
+      wpml_waypointHeadingPoiIndex = ET.SubElement(
+          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPoiIndex')
+      wpml_waypointHeadingPoiIndex.text = self.waypoint_heading_poi_index
+
+      return wpml_waypointHeadingParam
+
+    # -------------------------------------------------------------------------
+    def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height, polygon_id):
+        # Add new Placemark elements for each coordinate
+        # for idx, (lat_y, lon_x, elevation_from_dsm, polygon_id) in enumerate(self.csv_properties):
+        placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
+
+        point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+        coordinates_element = ET.SubElement(
+            point, f'{{{self.namespaces["kml"]}}}coordinates')
+        coordinates_element.text = f'{lon_x},{lat_y}'
+
+        wpml_index = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}index')
+        wpml_index.text = str(idx)
+
+        wpml_ellipsoidHeight = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
+        wpml_ellipsoidHeight.text = height
+
+        wpml_height = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}height')
+        wpml_height.text = height
+
+        wpml_waypointSpeed = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
+        wpml_waypointSpeed.text = self.wpml_waypointSpeed
+
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
+        placemark.append(wpml_waypointHeadingParam)
+
+        wpml_use_global_turn_param = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
+        wpml_use_global_turn_param.text = self.stop_use_global_turn_param
+
+        wpml_use_straight_line = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_use_straight_line.text = self.stop_use_straight_line
+
+        wpml_is_risky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_is_risky.text = self.stop_is_risky
+
+        ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = polygon_id
+        
+        self.folder.append(placemark)
+
+    # -------------------------------------------------------------------------
+    def addPlacemarkActionGroup(self, action_group_id, action_group_index):
         action_group = ET.Element(f'{{{self.namespaces["wpml"]}}}actionGroup')
         ET.SubElement(
-            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupId').text = self.action_group_id
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupId').text = str(action_group_id)
         ET.SubElement(
-            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex').text = str(index)
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex').text = str(action_group_index)
         ET.SubElement(
-            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex').text = str(index)
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex').text = str(action_group_index)
         ET.SubElement(
             action_group, f'{{{self.namespaces["wpml"]}}}actionGroupMode').text = self.action_group_mode
 
@@ -210,7 +318,7 @@ class BuildTemplateKML:
         return action_group
 
     # -------------------------------------------------------------------------
-    def addPlacemarkAction(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
+    def addPlacemarkOrientedShoot(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
         action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
         ET.SubElement(
             action, f'{{{self.namespaces["wpml"]}}}actionId').text = idx
@@ -266,18 +374,20 @@ class BuildTemplateKML:
         ET.SubElement(action_actuator_func_param,
                       f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = orientedFileSuffix
         ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedCameraShutterTime').text = self.orientedCameraShutterTime
+        ET.SubElement(action_actuator_func_param,
                       f'{{{self.namespaces["wpml"]}}}orientedPhotoMode').text = self.oriented_photo_mode
 
         return action
 
     # -------------------------------------------------------------------------
-    def addPlacemarkActions(self, idx, lat, lon, height_ellipsoidal, polygon_id):
+    def addTreePhotosPlacemark(self, idx, lat_y, lon_x, elevation_from_dsm, polygon_id, actionGroupId, actionGroupIndex):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
         coordinates_element = ET.SubElement(
             point, f'{{{self.namespaces["kml"]}}}coordinates')
-        coordinates_element.text = f'{lon},{lat}'
+        coordinates_element.text = f'{lon_x},{lat_y}'
 
         wpml_index = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}index')
@@ -285,15 +395,11 @@ class BuildTemplateKML:
 
         wpml_ellipsoidHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
-        wpml_ellipsoidHeight.text = str(
-            (float(height_ellipsoidal) -
-             float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
+        wpml_ellipsoidHeight.text = elevation_from_dsm
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
-        wpml_height.text = str(
-            (float(height_ellipsoidal) -
-             float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
+        wpml_height.text = elevation_from_dsm
 
         wpml_useGlobalSpeed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
@@ -315,20 +421,20 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
         wpml_useStraightLine.text = self.use_straight_line
 
-        wpml_isRisky = ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
-        wpml_isRisky.text = self.is_risky
-
-        wpml_actionGroup = self.addPlacemarkActionGroup(idx)
+        wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
         placemark.append(wpml_actionGroup)
 
-        wpml_action = self.addPlacemarkAction('1', '168', str(
+        wpml_action = self.addPlacemarkOrientedShoot('1', '168', str(
             polygon_id) + "zoom", '703556e4-81fb-4294-b607-05d5f748377f', '703556e4-81fb-4294-b607-05d5f748377f')
         wpml_actionGroup.append(wpml_action)
 
-        wpml_action = self.addPlacemarkAction('0', '24', str(
+        wpml_action = self.addPlacemarkOrientedShoot('0', '24', str(
             polygon_id), '51ae7825-56de-41d3-90bb-3c9ed6de7960', '393e34ba-016e-4fd3-98bf-3f9fe0c517df')
         wpml_actionGroup.append(wpml_action)
+
+        wpml_isRisky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_isRisky.text = self.is_risky
 
         self.folder.append(placemark)
 

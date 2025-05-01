@@ -15,10 +15,10 @@ def main():
         build_template_kml.generate()
         build_template_kml.saveNewKML()
 
-        build_waylines_wpml = BuildWaylinesWPML()
-        build_waylines_wpml.setup()
-        build_waylines_wpml.generate()
-        build_waylines_wpml.saveNewWPML()
+        # build_waylines_wpml = BuildWaylinesWPML()
+        # build_waylines_wpml.setup()
+        # build_waylines_wpml.generate()
+        # build_waylines_wpml.saveNewWPML()
 
         create_kmz = CreateKMZ()
         create_kmz.create_kmz()

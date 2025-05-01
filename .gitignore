@@ -1,3 +1,6 @@
+input 
+output
+
 # my own exclusion
 secrets
 /notebooks/

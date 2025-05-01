@@ -23,20 +23,16 @@ def load_config(config_path: str) -> Config:
 # Parse command line arguments
 parser = argparse.ArgumentParser(
     description='Generate the KMZ from a list of coordinates (lat, lon, elevation) in a CSV file.')
-parser.add_argument('--config', required=False,
-                    help='Path to the configuration file')
-parser.add_argument('--flight_height', '-fh', type=float, required=False,
-                    help='Flight height in meters')
-parser.add_argument('--takeoff_point_elevation', '-tpe', type=float, required=False,
-                    help='Takeoff point elevation in meters')
-parser.add_argument('--point_dsm_height_approach', '-pdha', type=float, default=10,
-                    help='Point DSM height approach in meters (default: 10)')
-parser.add_argument('--point_dsm_height_buffer', '-pdhb', type=float, default=6,
-                    help='Point DSM height buffer in meters (default: 6)')
+parser.add_argument('--config', '-s', type=str, required=False,
+                    help='Path to the configuration file. Other choice is to provide the --csv option.')
+parser.add_argument('--csv', '-c', type=str, required=False,
+                    help='Path to the input CSV file containing waypoints. Other choice is to provide the --config option.')
 parser.add_argument('--output', '-o', type=str, default='./output',
                     help='Output directory path (default: ./output)')
-parser.add_argument('--csv', '-c', type=str, required=False,
-                    help='Path to the input CSV file containing waypoints')
+parser.add_argument('--approach', '-a', type=float, default=10,
+                    help='Approach above the tree crown in meters (default: 10)')
+parser.add_argument('--buffer', '-b', type=float, default=6,
+                    help='Buffer above the tree crown in meters (default: 6)')
 parser.add_argument('--debug', '-d', action='store_true',
                     help='Run in debug mode (default: False)')
 
@@ -45,11 +41,6 @@ args = parser.parse_args()
 # Validate that either --config or --csv is provided
 if not args.config and not args.csv:
     parser.error("Either --config or --csv must be provided")
-    sys.exit(1)
-
-# If --csv is provided, flight_height and takeoff_point_elevation are required
-if args.csv and (args.flight_height is None or args.takeoff_point_elevation is None):
-    parser.error("When --csv is provided, both --flight_height and --takeoff_point_elevation are required")
     sys.exit(1)
 
 # Create config object
@@ -62,10 +53,8 @@ else:
     
     # Create a default Config object with command line values
     config = Config(
-        flight_height=args.flight_height,
-        takeoff_point_elevation=args.takeoff_point_elevation,
-        point_dsm_height_approach=args.point_dsm_height_approach,
-        point_dsm_height_buffer=args.point_dsm_height_buffer,
+        approach=args.approach,
+        buffer=args.buffer,
         base_path=args.output,
         base_name=base_name,
         points_csv_file_path=args.csv,

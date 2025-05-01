@@ -5,8 +5,6 @@ from pathlib import Path
 
 from lib.config import config
 
-
-
 # -----------------------------------------------------------------------------
 class CreateKMZ:
     # -------------------------------------------------------------------------
@@ -31,7 +29,7 @@ class CreateKMZ:
             if template_path.exists():
                 kmz.write(template_path, "wpmz/template.kml")
             
-            # Add waylines.wpml under wpmz folder
-            wpml_path = self.wpmz_dir / "waylines.wpml"
-            if wpml_path.exists():
-                kmz.write(wpml_path, "wpmz/waylines.wpml")
+            # # Add waylines.wpml under wpmz folder
+            # wpml_path = self.wpmz_dir / "waylines.wpml"
+            # if wpml_path.exists():
+            #     kmz.write(wpml_path, "wpmz/waylines.wpml")

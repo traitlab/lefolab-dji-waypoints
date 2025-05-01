@@ -23,10 +23,8 @@ from typing_extensions import Annotated
 
 
 class Config(BaseModel):
-    flight_height: int
-    takeoff_point_elevation: int
-    point_dsm_height_approach: int
-    point_dsm_height_buffer: int
+    approach: int
+    buffer: int
 
     base_path: Path
     base_name: str
