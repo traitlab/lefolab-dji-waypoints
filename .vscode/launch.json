@@ -31,13 +31,13 @@
       "console": "integratedTerminal",
       "args": [
         "--approach",
-        "5",
-        "--buffer",
         "10",
+        "--buffer",
+        "6",
         "--output",
         "${workspaceFolder}/test/output",
         "--csv",
-        "${workspaceFolder}/test/input/waypointVLF021tenpt.csv"
+        "${workspaceFolder}/test/input/waypointVLF022tenpt.csv"
       ]
     },
     {
@@ -48,13 +48,13 @@
       "console": "integratedTerminal",
       "args": [
         "-a",
-        "5",
-        "-b",
         "10",
+        "-b",
+        "6",
         "-o",
         "${workspaceFolder}/test/output",
         "-c",
-        "${workspaceFolder}/test/input/waypointVLF021onept.csv"
+        "${workspaceFolder}/test/input/waypointVLF022onept.csv"
       ]
     }
   ]

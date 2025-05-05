@@ -1,11 +1,5 @@
-flight_height: 400
-takeoff_point_elevation: 331
-# <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
-# conversion GPSh NRCAN.GC.CA
-point_dsm_height_approach: 5
-point_dsm_height_buffer: 10
-# buffer is added to the flight height
-# it's also used to add a buffer to the height above the tree for the picture
+approach: 10
+buffer: 6
 
 base_path: '/data/xprize'
 base_name: '20240529_sblz1z2_p1'
