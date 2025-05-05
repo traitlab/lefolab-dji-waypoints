@@ -17,30 +17,14 @@ class BuildTemplateKML:
         self.wpt_csv_properties = None
         self.cpt_csv_properties = None
 
-        # Stop placemark
-        self.stop_use_global_speed = '1'
-        self.stop_use_global_heading_param = '1'
-        self.stop_use_global_turn_param = '1'
-        self.stop_use_straight_line = '0'
-        self.stop_is_risky = '0'
-
         # Variables for common values
         self.use_global_speed = '1'
         self.use_global_heading_param = '1'
         self.use_global_turn_param = '1'
-        self.gimbal_pitch_angle = '-90'
         self.use_straight_line = '0'
 
         self.wpml_waypointSpeed = '3'
-        self.waypoint_heading_mode = 'smoothTransition'
-        self.waypoint_heading_angle = '0'
-        self.waypoint_poi_point = '0.000000,0.000000,0.000000'
-        self.waypoint_heading_path_mode = 'followBadArc'
-        self.waypoint_heading_poi_index = '0'
 
-        self.action_group_id = '0'
-        self.action_group_start_index = '0'
-        self.action_group_end_index = '0'
         self.action_group_mode = 'sequence'
         self.action_trigger_type = 'reachPoint'
 
@@ -56,7 +40,6 @@ class BuildTemplateKML:
 
         self.gimbalRotateMode = 'absoluteAngle'
         self.gimbalPitchRotateEnable = '1'
-        self.gimbalPitchRotateAngle = '-90'
         self.gimbalRollRotateEnable = '0'
         self.gimbalRollRotateAngle = '0'
         self.gimbalYawRotateEnable = '0'
@@ -204,19 +187,19 @@ class BuildTemplateKML:
 
         wpml_use_global_speed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
-        wpml_use_global_speed.text = self.stop_use_global_speed
+        wpml_use_global_speed.text = self.use_global_speed
 
         wpml_use_global_heading_param = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
-        wpml_use_global_heading_param.text = self.stop_use_global_heading_param
+        wpml_use_global_heading_param.text = self.use_global_heading_param
 
         wpml_use_global_turn_param = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
-        wpml_use_global_turn_param.text = self.stop_use_global_turn_param
+        wpml_use_global_turn_param.text = self.use_global_turn_param
 
         wpml_use_straight_line = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
-        wpml_use_straight_line.text = self.stop_use_straight_line
+        wpml_use_straight_line.text = self.use_straight_line
 
         wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
         placemark.append(wpml_actionGroup)
@@ -226,31 +209,9 @@ class BuildTemplateKML:
 
         wpml_is_risky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
-        wpml_is_risky.text = self.stop_is_risky
+        wpml_is_risky.text = self.is_risky
 
         self.folder.append(placemark)
-
-    # -------------------------------------------------------------------------
-    def addWaypointHeadingParam(self):
-      wpml_waypointHeadingParam = ET.Element(f'{{{self.namespaces["wpml"]}}}waypointHeadingParam')
-
-      wpml_waypointHeadingMode = ET.SubElement(
-          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingMode')
-      wpml_waypointHeadingMode.text = self.waypoint_heading_mode
-      wpml_waypointHeadingAngle = ET.SubElement(
-          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngle')
-      wpml_waypointHeadingAngle.text = self.waypoint_heading_angle
-      wpml_waypointPoiPoint = ET.SubElement(
-          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointPoiPoint')
-      wpml_waypointPoiPoint.text = self.waypoint_poi_point
-      wpml_waypointHeadingPathMode = ET.SubElement(
-          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPathMode')
-      wpml_waypointHeadingPathMode.text = self.waypoint_heading_path_mode
-      wpml_waypointHeadingPoiIndex = ET.SubElement(
-          wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPoiIndex')
-      wpml_waypointHeadingPoiIndex.text = self.waypoint_heading_poi_index
-
-      return wpml_waypointHeadingParam
 
     # -------------------------------------------------------------------------
     def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height, polygon_id):
@@ -279,20 +240,21 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
         wpml_waypointSpeed.text = self.wpml_waypointSpeed
 
-        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
-        placemark.append(wpml_waypointHeadingParam)
+        wpml_use_global_heading_param = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
+        wpml_use_global_heading_param.text = self.use_global_heading_param
 
         wpml_use_global_turn_param = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
-        wpml_use_global_turn_param.text = self.stop_use_global_turn_param
+        wpml_use_global_turn_param.text = self.use_global_turn_param
 
         wpml_use_straight_line = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
-        wpml_use_straight_line.text = self.stop_use_straight_line
+        wpml_use_straight_line.text = self.use_straight_line
 
         wpml_is_risky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
-        wpml_is_risky.text = self.stop_is_risky
+        wpml_is_risky.text = self.is_risky
 
         self.folder.append(placemark)
 
@@ -437,8 +399,9 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
         wpml_useGlobalSpeed.text = self.use_global_speed
 
-        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
-        placemark.append(wpml_waypointHeadingParam)
+        wpml_use_global_heading_param = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
+        wpml_use_global_heading_param.text = self.use_global_heading_param
 
         wpml_useGlobalTurnParam = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')

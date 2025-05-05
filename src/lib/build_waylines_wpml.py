@@ -7,8 +7,6 @@ from xml.dom.minidom import parseString
 
 from lib.config import config
 
-from lib.WGS84toEGM96 import download_egm96, transform_to_egm96
-
 class BuildWaylinesWPML:
 
     # -------------------------------------------------------------------------
@@ -29,31 +27,15 @@ class BuildWaylinesWPML:
 
         self.waypointWorkType= '0'
 
-        # Stop placemark
-        self.stop_use_global_speed = '1'
-        self.stop_use_global_heading_param = '1'
-        self.stop_use_global_turn_param = '1'
-        self.stop_use_straight_line = '0'
-        self.stop_is_risky = '0'
-
         # Variables for common values
-        self.use_global_speed = '1'
-        self.use_global_heading_param = '1'
-        self.use_global_turn_param = '1'
-        self.gimbal_pitch_angle = '-90'
         self.use_straight_line = '1'
 
-        self.wpml_waypointSpeed = '3'
-        self.waypoint_heading_mode = 'smoothTransition'
+        self.waypoint_heading_mode = 'followWayline'
         self.waypoint_heading_angle = '0'
         self.waypoint_heading_angle_enable = '0'
         self.waypoint_poi_point = '0.000000,0.000000,0.000000'
-        self.waypoint_heading_path_mode = 'followBadArc'
         self.waypoint_heading_poi_index = '0'
 
-        self.action_group_id = '0'
-        self.action_group_start_index = '0'
-        self.action_group_end_index = '0'
         self.action_group_mode = 'sequence'
         self.action_trigger_type = 'reachPoint'
 
@@ -69,7 +51,6 @@ class BuildWaylinesWPML:
 
         self.gimbalRotateMode = 'absoluteAngle'
         self.gimbalPitchRotateEnable = '1'
-        self.gimbalPitchRotateAngle = '-90'
         self.gimbalRollRotateEnable = '0'
         self.gimbalRollRotateAngle = '0'
         self.gimbalYawRotateEnable = '0'
@@ -122,10 +103,6 @@ class BuildWaylinesWPML:
 
     # -------------------------------------------------------------------------
     def setup(self):
-        
-        # make sure to have the right transformation
-        download_egm96()
-
         # Read the coordinates from the CSV
         self.wpt_csv_properties = self.read_points_csv(
             config.points_csv_file_path, 'wpt')
@@ -168,27 +145,24 @@ class BuildWaylinesWPML:
         # Add new Placemark elements for each coordinate
         actionGroupId = 0
         for idx, (lat_y, lon_x, wpt_elevation_from_dsm, polygon_id) in enumerate(self.wpt_csv_properties):
-            _, _, wpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, wpt_elevation_from_dsm)
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx][2]
-            _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
 
             index = idx * 4
             actionGroupId = idx * 3
-            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            height = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
                 index, lat_y, lon_x, height, polygon_id, '-90', actionGroupId, index)
             
-            height = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            height = str(float(wpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
                 index + 1, lat_y, lon_x, height, polygon_id)
 
-            height = str(float(wpt_ellips_height_egm96) + float(config.buffer))
+            height = str(float(wpt_elevation_from_dsm) + float(config.buffer))
             self.addTreePhotosPlacemark(
                 index + 2, lat_y, lon_x, height, polygon_id, actionGroupId + 1, index + 2)
             
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
-            _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
-            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            height = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
                 index + 3, lat_y, lon_x, height, polygon_id, '-15', actionGroupId + 2, index + 3)
 
@@ -236,7 +210,7 @@ class BuildWaylinesWPML:
 
         wpml_is_risky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
-        wpml_is_risky.text = self.stop_is_risky
+        wpml_is_risky.text = self.is_risky
 
         wpml_waypointWorkType = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
@@ -245,12 +219,12 @@ class BuildWaylinesWPML:
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
-    def addWaypointHeadingParam(self, waypointHeadingMode='followWayline', waypointHeadingAngleEnable='0'):
+    def addWaypointHeadingParam(self):
         wpml_waypointHeadingParam = ET.Element(f'{{{self.namespaces["wpml"]}}}waypointHeadingParam')
 
         wpml_waypointHeadingMode = ET.SubElement(
             wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingMode')
-        wpml_waypointHeadingMode.text = waypointHeadingMode
+        wpml_waypointHeadingMode.text = self.waypoint_heading_mode
 
         wpml_waypointHeadingAngle = ET.SubElement(
             wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngle')
@@ -262,13 +236,8 @@ class BuildWaylinesWPML:
 
         wpml_waypointHeadingAngleEnable = ET.SubElement(
             wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngleEnable')
-        wpml_waypointHeadingAngleEnable.text = waypointHeadingAngleEnable
+        wpml_waypointHeadingAngleEnable.text = self.waypoint_heading_angle_enable
         
-        if( waypointHeadingMode == 'smoothTransition'):
-            wpml_waypointHeadingPathMode = ET.SubElement(
-                wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPathMode')
-            wpml_waypointHeadingPathMode.text = self.waypoint_heading_path_mode
-
         wpml_waypointHeadingPoiIndex = ET.SubElement(
             wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPoiIndex')
         wpml_waypointHeadingPoiIndex.text = self.waypoint_heading_poi_index
@@ -326,7 +295,7 @@ class BuildWaylinesWPML:
             placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
         wpml_waypointSpeed.text = self.waypointSpeed_approach
 
-        wpml_waypointHeadingParam = self.addWaypointHeadingParam('smoothTransition', '1')
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
         placemark.append(wpml_waypointHeadingParam)
 
         wpml_waypointTurnParam = self.addWaypointTurnParam()
@@ -341,7 +310,7 @@ class BuildWaylinesWPML:
 
         wpml_is_risky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
-        wpml_is_risky.text = self.stop_is_risky
+        wpml_is_risky.text = self.is_risky
 
         wpml_waypointWorkType = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
@@ -512,7 +481,7 @@ class BuildWaylinesWPML:
 
         wpml_is_risky = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
-        wpml_is_risky.text = self.stop_is_risky
+        wpml_is_risky.text = self.is_risky
 
         wpml_waypointWorkType = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
