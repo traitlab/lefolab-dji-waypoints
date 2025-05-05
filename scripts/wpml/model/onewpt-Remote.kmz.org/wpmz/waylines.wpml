@@ -142,13 +142,13 @@
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalPitchRotateAngle>-90</wpml:gimbalPitchRotateAngle>
               <wpml:gimbalRollRotateAngle>0</wpml:gimbalRollRotateAngle>
-              <wpml:gimbalYawRotateAngle>-52.6846771240234</wpml:gimbalYawRotateAngle>
+              <wpml:gimbalYawRotateAngle>0</wpml:gimbalYawRotateAngle>
               <wpml:focusX>0</wpml:focusX>
               <wpml:focusY>0</wpml:focusY>
               <wpml:focusRegionWidth>0</wpml:focusRegionWidth>
               <wpml:focusRegionHeight>0</wpml:focusRegionHeight>
               <wpml:focalLength>168</wpml:focalLength>
-              <wpml:aircraftHeading>-52</wpml:aircraftHeading>
+              <wpml:aircraftHeading>0</wpml:aircraftHeading>
               <wpml:accurateFrameValid>0</wpml:accurateFrameValid>
               <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
               <wpml:useGlobalPayloadLensIndex>0</wpml:useGlobalPayloadLensIndex>
@@ -173,13 +173,13 @@
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalPitchRotateAngle>-90</wpml:gimbalPitchRotateAngle>
               <wpml:gimbalRollRotateAngle>0</wpml:gimbalRollRotateAngle>
-              <wpml:gimbalYawRotateAngle>-52.6846771240234</wpml:gimbalYawRotateAngle>
+              <wpml:gimbalYawRotateAngle>0</wpml:gimbalYawRotateAngle>
               <wpml:focusX>0</wpml:focusX>
               <wpml:focusY>0</wpml:focusY>
               <wpml:focusRegionWidth>0</wpml:focusRegionWidth>
               <wpml:focusRegionHeight>0</wpml:focusRegionHeight>
               <wpml:focalLength>24</wpml:focalLength>
-              <wpml:aircraftHeading>-52</wpml:aircraftHeading>
+              <wpml:aircraftHeading>0</wpml:aircraftHeading>
               <wpml:accurateFrameValid>0</wpml:accurateFrameValid>
               <wpml:payloadPositionIndex>0</wpml:payloadPositionIndex>
               <wpml:useGlobalPayloadLensIndex>0</wpml:useGlobalPayloadLensIndex>
@@ -241,7 +241,7 @@
             <wpml:actionActuatorFuncParam>
               <wpml:gimbalRotateMode>absoluteAngle</wpml:gimbalRotateMode>
               <wpml:gimbalPitchRotateEnable>1</wpml:gimbalPitchRotateEnable>
-              <wpml:gimbalPitchRotateAngle>-10</wpml:gimbalPitchRotateAngle>
+              <wpml:gimbalPitchRotateAngle>-15</wpml:gimbalPitchRotateAngle>
               <wpml:gimbalRollRotateEnable>0</wpml:gimbalRollRotateEnable>
               <wpml:gimbalRollRotateAngle>0</wpml:gimbalRollRotateAngle>
               <wpml:gimbalYawRotateEnable>0</wpml:gimbalYawRotateEnable>

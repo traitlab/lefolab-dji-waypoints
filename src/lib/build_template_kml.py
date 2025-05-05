@@ -228,9 +228,6 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
         wpml_is_risky.text = self.stop_is_risky
 
-        ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = polygon_id
-
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
@@ -297,9 +294,6 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
         wpml_is_risky.text = self.stop_is_risky
 
-        ET.SubElement(
-            placemark, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = polygon_id
-        
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------

@@ -31,13 +31,13 @@ class Config(BaseModel):
 
     points_csv_file_path: FilePath
 
-    kml_model_file_path: FilePath = './scripts/wpml/model/Waypoint3_modif/wpmz/template.kml'
+    kml_model_file_path: FilePath = './scripts/wpml/model/onewpt-Remote.kmz.org/wpmz/template.kml'
     output_kml_file_path: Path = 'wpmz/template.kml'
-    wpml_model_file_path: FilePath = './scripts/wpml/model/Waypoint3_modif/wpmz/waylines.wpml'
+    wpml_model_file_path: FilePath = './scripts/wpml/model/onewpt-Remote.kmz.org/wpmz/waylines.wpml'
     output_wpml_file_path: Path = 'wpmz/waylines.wpml'
 
-    waylines_placemark_no_action: FilePath = './config/waylines_placemark_no_action.json'
-    waylines_placemark_with_actions: FilePath = './config/waylines_placemark_with_actions.json'
+    # waylines_placemark_no_action: FilePath = './config/waylines_placemark_no_action.json'
+    # waylines_placemark_with_actions: FilePath = './config/waylines_placemark_with_actions.json'
 
     debug_mode: bool = False
 

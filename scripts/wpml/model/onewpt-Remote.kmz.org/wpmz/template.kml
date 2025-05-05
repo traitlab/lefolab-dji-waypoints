@@ -90,7 +90,7 @@
         <wpml:index>1</wpml:index>
         <wpml:ellipsoidHeight>407.113555908203</wpml:ellipsoidHeight>
         <wpml:height>439.879486083984</wpml:height>
-        <wpml:waypointSpeed>1</wpml:waypointSpeed>
+        <wpml:waypointSpeed>3</wpml:waypointSpeed>
         <wpml:waypointHeadingParam>
           <wpml:waypointHeadingMode>smoothTransition</wpml:waypointHeadingMode>
           <wpml:waypointHeadingAngle>0</wpml:waypointHeadingAngle>

@@ -17,6 +17,9 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.6 vincent.lefalher@umontreal.ca 20250505
+- generate waylines
+
 0.2.5 vincent.lefalher@umontreal.ca 20250429
 - reset waypointHeadingParam as before (smoothTransition)
 - removed hover zoom focus

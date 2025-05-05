@@ -1,37 +1,118 @@
 import csv
-import json
 import os
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from xml.dom.minidom import parseString
 
 from lib.config import config
 
+from lib.WGS84toEGM96 import download_egm96, transform_to_egm96
 
 class BuildWaylinesWPML:
 
     # -------------------------------------------------------------------------
     def __init__(self):
 
-        self.points_csv_properties = None
+        self.wpt_csv_properties = None
+        self.cpt_csv_properties = None
 
-        # Find the Folder element containing Placemarks
+        self.waypointSpeed = '15'
+        self.waypointSpeed_approach = '1'
+        # waypointTurnParam
+        self.waypointTurnMode = 'toPointAndStopWithDiscontinuityCurvature'
+        self.waypointTurnDampingDist = '0'
+
+        # waypointGimbalHeadingParam
+        self.waypointGimbalPitchAngle = '0'
+        self.waypointGimbalYawAngle = '0'
+
+        self.waypointWorkType= '0'
+
+        # Stop placemark
+        self.stop_use_global_speed = '1'
+        self.stop_use_global_heading_param = '1'
+        self.stop_use_global_turn_param = '1'
+        self.stop_use_straight_line = '0'
+        self.stop_is_risky = '0'
+
+        # Variables for common values
+        self.use_global_speed = '1'
+        self.use_global_heading_param = '1'
+        self.use_global_turn_param = '1'
+        self.gimbal_pitch_angle = '-90'
+        self.use_straight_line = '1'
+
+        self.wpml_waypointSpeed = '3'
+        self.waypoint_heading_mode = 'smoothTransition'
+        self.waypoint_heading_angle = '0'
+        self.waypoint_heading_angle_enable = '0'
+        self.waypoint_poi_point = '0.000000,0.000000,0.000000'
+        self.waypoint_heading_path_mode = 'followBadArc'
+        self.waypoint_heading_poi_index = '0'
+
+        self.action_group_id = '0'
+        self.action_group_start_index = '0'
+        self.action_group_end_index = '0'
+        self.action_group_mode = 'sequence'
+        self.action_trigger_type = 'reachPoint'
+
+        # self.action_id = '0'
+        self.action_actuator_func = 'orientedShoot'
+        self.gimbal_pitch_rotate_angle = '-90'
+        self.gimbal_roll_rotate_angle = '0'
+        self.gimbal_yaw_rotate_angle = '0'
+        self.focus_x = '0'
+        self.focus_y = '0'
+        self.focus_region_width = '0'
+        self.focus_region_height = '0'
+
+        self.gimbalRotateMode = 'absoluteAngle'
+        self.gimbalPitchRotateEnable = '1'
+        self.gimbalPitchRotateAngle = '-90'
+        self.gimbalRollRotateEnable = '0'
+        self.gimbalRollRotateAngle = '0'
+        self.gimbalYawRotateEnable = '0'
+        self.gimbalYawRotateAngle = '0'
+        self.gimbalRotateTimeEnable = '0'
+        self.gimbalRotateTime = '0'
+        self.payloadPositionIndex = '0'
+
+        self.aircraft_heading = '0'
+        self.accurate_frame_valid = '0'
+        self.payload_position_index = '0'
+        self.use_global_payload_lens_index = '0'
+        self.target_angle = '0'
+        self.image_width = '0'
+        self.image_height = '0'
+        self.af_pos = '0'
+        self.gimbal_port = '0'
+        self.oriented_camera_type = '67'
+        self.oriented_file_size = '0'
+        self.orientedCameraShutterTime = '0.00625'
+
+        self.oriented_photo_mode = 'normalPhoto'
+        self.is_risky = '0'
+        
+        # Define namespaces
         self.namespaces = {
-            'kml': "http://www.opengis.net/kml/2.2",
-            'wpml': "http://www.dji.com/wpmz/1.0.6"
+            'kml': 'http://www.opengis.net/kml/2.2',
+            'wpml': 'http://www.dji.com/wpmz/1.0.6'
         }
 
     # -------------------------------------------------------------------------
-    def read_points_csv(self, csv_file):
+    def read_points_csv(self, csv_file, type):
         properties = []
         with open(csv_file, 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                lon = row['lon_x']
-                lat = row['lat_y']
-                height_ellipsoidal = row['elevation_from_dsm']
+                if row['type'] != type :
+                  continue
+                lon_x = row['lon_x']
+                lat_y = row['lat_y']
+                elevation_from_dsm = row['elevation_from_dsm']
                 polygon_id = row['polygon_id']
-                properties.append((lat, lon, height_ellipsoidal, polygon_id))
+                properties.append((lat_y, lon_x, elevation_from_dsm, polygon_id))
 
         # Check if the first and last points are the same and remove the last point if they are
         if len(properties) > 1 and properties[0] == properties[-1]:
@@ -41,181 +122,401 @@ class BuildWaylinesWPML:
 
     # -------------------------------------------------------------------------
     def setup(self):
+        
+        # make sure to have the right transformation
+        download_egm96()
+
         # Read the coordinates from the CSV
-        self.points_csv_properties = self.read_points_csv(
-            config.points_csv_file_path)
+        self.wpt_csv_properties = self.read_points_csv(
+            config.points_csv_file_path, 'wpt')
+        self.cpt_csv_properties = self.read_points_csv(
+            config.points_csv_file_path, 'cpt')
+        if len(self.wpt_csv_properties) < 2:
+            self.cpt_csv_properties = self.wpt_csv_properties.copy()
+            self.cpt_csv_properties.append(list(self.cpt_csv_properties[-1]))
+            # sys.exit("Not enought wpt. Minimum of two wpt is supported. One wpt can be created directly using the drone remote.")
+        elif len(self.wpt_csv_properties) != len(self.cpt_csv_properties) + 1:
+            if len(self.wpt_csv_properties) > len(self.cpt_csv_properties) + 1:
+              sys.exit("Two many wpt or not enought cpt. Number of wpt must be one more than the number of cpt points.")
+            if len(self.wpt_csv_properties) < len(self.cpt_csv_properties) + 1:
+              sys.exit("Too many cpt or not enought wpt. Number of wpt must be one more than the number of cpt points.")
+        # Duplicate the first and last checkpoint property to make thing easier to handle the first and last waypoint 
+        self.cpt_csv_properties.insert(0, self.cpt_csv_properties[0][:])
+        self.cpt_csv_properties.append(list(self.cpt_csv_properties[-1]))
 
         # Register namespaces and parse the KML file
         ET.register_namespace('', "http://www.opengis.net/kml/2.2")
         ET.register_namespace('wpml', "http://www.dji.com/wpmz/1.0.6")
+
+        # Parse the KML file
         self.tree = ET.parse(config.wpml_model_file_path)
         self.root = self.tree.getroot()
 
+        # Find the Folder element
         self.folder = self.root.find('.//kml:Folder', self.namespaces)
-
-        # Remove existing Placemark elements
+        # Remove all existing Placemark elements with Point
         for placemark in self.folder.findall('kml:Placemark', self.namespaces):
             self.folder.remove(placemark)
 
     # -------------------------------------------------------------------------
     def generate(self):
+        # Find the first checkpoint's elevation_from_dsm
+        # The first check point is either at the same height than the frist tree or higher. So it's ok to use it as the first point altitude to reach. 
+        # Safe takeoff altitude is set by the pilote (takeOffSecurityHeight is set to 100 in our templat_ye)  
+        # Return to home altitude is also set on the drone remote by the pilote for the last point
+
         # Add new Placemark elements for each coordinate
-        for idx, (lat, lon, height_ellipsoidal, polygon_id) in enumerate(self.points_csv_properties):
+        actionGroupId = 0
+        for idx, (lat_y, lon_x, wpt_elevation_from_dsm, polygon_id) in enumerate(self.wpt_csv_properties):
+            _, _, wpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, wpt_elevation_from_dsm)
+            cpt_elevation_from_dsm = self.cpt_csv_properties[idx][2]
+            _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
+
             index = idx * 4
-            height = str(
-                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
-            self.addPlacemarkStopNoAction(
-                index, lat, lon, height)
-            height = str(
-                (float(height_ellipsoidal) - float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer) + float(config.point_dsm_height_approach))
-            self.addPlacemarkStopNoAction(
-                index + 1, lat, lon, height)
-            self.addPlacemarkWithActions(
-                index + 2, lat, lon, height_ellipsoidal, polygon_id)
-            height = str(
-                float(config.flight_height) - float(config.takeoff_point_elevation) + float(config.point_dsm_height_buffer))
-            self.addPlacemarkStopNoAction(
-                index + 3, lat, lon, height)
+            actionGroupId = idx * 3
+            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            self.addTreeFirstLastPlacemark(
+                index, lat_y, lon_x, height, polygon_id, '-90', actionGroupId, index)
+            
+            height = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            self.addTreeApproachPlacemark(
+                index + 1, lat_y, lon_x, height, polygon_id)
+
+            height = str(float(wpt_ellips_height_egm96) + float(config.buffer))
+            self.addTreePhotosPlacemark(
+                index + 2, lat_y, lon_x, height, polygon_id, actionGroupId + 1, index + 2)
+            
+            cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
+            _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
+            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            self.addTreeFirstLastPlacemark(
+                index + 3, lat_y, lon_x, height, polygon_id, '-15', actionGroupId + 2, index + 3)
 
     # -------------------------------------------------------------------------
-    def addPlacemarkStopNoAction(self, idx, lat, lon, height):
+    def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, polygon_id, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
+        # Add new Placemark elements for each coordinate
+        # for idx, (lat_y, lon_x, elevation_from_dsm, polygon_id) in enumerate(self.csv_properties):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
         coordinates_element = ET.SubElement(
             point, f'{{{self.namespaces["kml"]}}}coordinates')
-        coordinates_element.text = f'{lon},{lat}'
+        coordinates_element.text = f'{lon_x},{lat_y}'
 
         wpml_index = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}index')
         wpml_index.text = str(idx)
 
-        wpml_execute_height = ET.SubElement(
+        wpml_executeHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-        wpml_execute_height.text = height
+        wpml_executeHeight.text = height
 
-        # Load properties from JSON file
-        with open(config.waylines_placemark_no_action) as json_file:
-            properties = json.load(json_file)
+        wpml_waypointSpeed = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
+        wpml_waypointSpeed.text = self.waypointSpeed
 
-        # Add other properties from JSON file
-        for prop, value in properties.items():
-            if prop in ['coordinates', 'index', 'executeHeight']:
-                continue
-            self.addProperty(placemark, prop, value)
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
+        placemark.append(wpml_waypointHeadingParam)
+
+        wpml_waypointTurnParam = self.addWaypointTurnParam()
+        placemark.append(wpml_waypointTurnParam)
+
+        wpml_use_straight_line = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_use_straight_line.text = self.use_straight_line
+
+        wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
+        placemark.append(wpml_actionGroup)
+
+        wpml_action = self.addPlacemarkActionGimbalRotate('0', gimbalPitchRotateAngle)
+        wpml_actionGroup.append(wpml_action)
+
+        wpml_waypointGimbalHeadingParam = self.addWaypointGimbalHeadingParam()
+        placemark.append(wpml_waypointGimbalHeadingParam)
+
+        wpml_is_risky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_is_risky.text = self.stop_is_risky
+
+        wpml_waypointWorkType = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
+        wpml_waypointWorkType.text = self.waypointWorkType
 
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
-    def addProperty(self, parent_elem, key, value):
-        if isinstance(value, dict):
-            # If value is a dictionary, create a sub-element and recursively call addProperty
-            sub_elem = ET.SubElement(
-                parent_elem, f'{{{self.namespaces["wpml"]}}}{key}')
-            for sub_key, sub_value in value.items():
-                self.addProperty(sub_elem, sub_key, sub_value)
-        else:
-            # If value is not a dictionary, add it as a subelement
-            prop_elem = ET.SubElement(
-                parent_elem, f'{{{self.namespaces["wpml"]}}}{key}')
-            prop_elem.text = str(value)
+    def addWaypointHeadingParam(self, waypointHeadingMode='followWayline', waypointHeadingAngleEnable='0'):
+        wpml_waypointHeadingParam = ET.Element(f'{{{self.namespaces["wpml"]}}}waypointHeadingParam')
+
+        wpml_waypointHeadingMode = ET.SubElement(
+            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingMode')
+        wpml_waypointHeadingMode.text = waypointHeadingMode
+
+        wpml_waypointHeadingAngle = ET.SubElement(
+            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngle')
+        wpml_waypointHeadingAngle.text = self.waypoint_heading_angle
+
+        wpml_waypointPoiPoint = ET.SubElement(
+            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointPoiPoint')
+        wpml_waypointPoiPoint.text = self.waypoint_poi_point
+
+        wpml_waypointHeadingAngleEnable = ET.SubElement(
+            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingAngleEnable')
+        wpml_waypointHeadingAngleEnable.text = waypointHeadingAngleEnable
+        
+        if( waypointHeadingMode == 'smoothTransition'):
+            wpml_waypointHeadingPathMode = ET.SubElement(
+                wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPathMode')
+            wpml_waypointHeadingPathMode.text = self.waypoint_heading_path_mode
+
+        wpml_waypointHeadingPoiIndex = ET.SubElement(
+            wpml_waypointHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointHeadingPoiIndex')
+        wpml_waypointHeadingPoiIndex.text = self.waypoint_heading_poi_index
+
+        return wpml_waypointHeadingParam
 
     # -------------------------------------------------------------------------
-    def addPlacemarkAction(self, parent, action, polygon_id):
-        action_elem = ET.SubElement(
-            parent, f'{{{self.namespaces["wpml"]}}}action')
+    def addWaypointTurnParam(self):
+      wpml_waypointTurnParam = ET.Element(f'{{{self.namespaces["wpml"]}}}waypointTurnParam')
 
-        action_id = ''
+      wpml_waypointTurnMode = ET.SubElement(
+          wpml_waypointTurnParam, f'{{{self.namespaces["wpml"]}}}waypointTurnMode')
+      wpml_waypointTurnMode.text = self.waypointTurnMode
+      
+      wpml_waypointTurnDampingDist = ET.SubElement(
+          wpml_waypointTurnParam, f'{{{self.namespaces["wpml"]}}}waypointTurnDampingDist')
+      wpml_waypointTurnDampingDist.text = self.waypointTurnDampingDist
 
-        for key, value in action.items():
-            if key == 'actionId':
-                action_child_elem = ET.SubElement(action_elem, f'wpml:{key}')
-                action_child_elem.text = value
-
-                action_id = value
-
-            elif key == 'actionActuatorFuncParam':
-                params_elem = ET.SubElement(
-                    action_elem, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
-                for param_key, param_value in value.items():
-                    if param_key == 'orientedFileSuffix':
-                        wpml_oriented_file_suffix = ET.SubElement(
-                            params_elem, f'{{{self.namespaces["wpml"]}}}orientedFileSuffix')
-                        wpml_oriented_file_suffix.text = f'action{action_id}_' + str(
-                            polygon_id)
-                    else:
-                        param_elem = ET.SubElement(
-                            params_elem, f'{{{self.namespaces["wpml"]}}}{param_key}')
-                        param_elem.text = param_value
-            else:
-                action_child_elem = ET.SubElement(action_elem, f'wpml:{key}')
-                action_child_elem.text = value
+      return wpml_waypointTurnParam
 
     # -------------------------------------------------------------------------
-    def addPlacemarkActionGroup(self, idx, action_group, polygon_id):
-        action_group_elem = ET.Element(
-            f'{{{self.namespaces["wpml"]}}}actionGroup')
-        for key, value in action_group.items():
-            if key == 'actions':
-                for action in value:
-                    self.addPlacemarkAction(
-                        action_group_elem, action, polygon_id)
-            elif key == 'actionGroupStartIndex':
-                actionGroupStartIndex = ET.SubElement(
-                    action_group_elem, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex')
-                actionGroupStartIndex.text = str(idx)
-            elif key == 'actionGroupEndIndex':
-                actionGroupEndIndex = ET.SubElement(
-                    action_group_elem, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex')
-                actionGroupEndIndex.text = str(idx)
-            else:
-                self.addProperty(action_group_elem, key, value)
-                # action_group_child_elem = ET.SubElement(
-                #     action_group_elem, f'{{{self.namespaces["wpml"]}}}{key}')
-                # action_group_child_elem.text = value
-        return action_group_elem
+    def addWaypointGimbalHeadingParam(self):
+      wpml_waypointGimbalHeadingParam = ET.Element(f'{{{self.namespaces["wpml"]}}}waypointGimbalHeadingParam')
+
+      wpml_waypointGimbalPitchAngle = ET.SubElement(
+          wpml_waypointGimbalHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointGimbalPitchAngle')
+      wpml_waypointGimbalPitchAngle.text = self.waypointGimbalPitchAngle
+      
+      wpml_waypointGimbalYawAngle = ET.SubElement(
+          wpml_waypointGimbalHeadingParam, f'{{{self.namespaces["wpml"]}}}waypointGimbalYawAngle')
+      wpml_waypointGimbalYawAngle.text = self.waypointGimbalYawAngle
+
+      return wpml_waypointGimbalHeadingParam
 
     # -------------------------------------------------------------------------
-    def addPlacemarkWithActions(self, idx, lat, lon, height_ellipsoidal, polygon_id):
+    def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height, polygon_id):
+        # Add new Placemark elements for each coordinate
+        # for idx, (lat_y, lon_x, elevation_from_dsm, polygon_id) in enumerate(self.csv_properties):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
         coordinates_element = ET.SubElement(
             point, f'{{{self.namespaces["kml"]}}}coordinates')
-        coordinates_element.text = f'{lon},{lat}'
+        coordinates_element.text = f'{lon_x},{lat_y}'
 
         wpml_index = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}index')
         wpml_index.text = str(idx)
 
-        wpml_execute_height = ET.SubElement(
+        wpml_executeHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
-        wpml_execute_height.text = str(
-            (float(height_ellipsoidal) - float(config.takeoff_point_elevation)) + float(config.point_dsm_height_buffer))
+        wpml_executeHeight.text = height
 
-        # Load properties from JSON file
-        with open(config.waylines_placemark_with_actions) as json_file:
-            properties = json.load(json_file)
+        wpml_waypointSpeed = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
+        wpml_waypointSpeed.text = self.waypointSpeed_approach
 
-        # Other attributes
-        for key, value in properties.items():
-            if key in ['coordinates', 'index', 'executeHeight']:
-                continue
-            if key == 'actionGroups':
-                for action_group in value:
-                    action_group_elem = self.addPlacemarkActionGroup(idx,
-                                                                     action_group, polygon_id)
-                    placemark.append(action_group_elem)
-            else:
-                child_elem = ET.SubElement(
-                    placemark, f'{{{self.namespaces["wpml"]}}}{key}')
-                if isinstance(value, dict):
-                    for sub_key, sub_value in value.items():
-                        sub_child_elem = ET.SubElement(
-                            child_elem, f'{{{self.namespaces["wpml"]}}}{sub_key}')
-                        sub_child_elem.text = sub_value
-                else:
-                    child_elem.text = value
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam('smoothTransition', '1')
+        placemark.append(wpml_waypointHeadingParam)
+
+        wpml_waypointTurnParam = self.addWaypointTurnParam()
+        placemark.append(wpml_waypointTurnParam)
+
+        wpml_use_straight_line = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_use_straight_line.text = self.use_straight_line
+
+        wpml_waypointGimbalHeadingParam = self.addWaypointGimbalHeadingParam()
+        placemark.append(wpml_waypointGimbalHeadingParam)
+
+        wpml_is_risky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_is_risky.text = self.stop_is_risky
+
+        wpml_waypointWorkType = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
+        wpml_waypointWorkType.text = self.waypointWorkType
+
+        self.folder.append(placemark)
+
+    # -------------------------------------------------------------------------
+    def addPlacemarkActionGroup(self, action_group_id, action_group_index):
+        action_group = ET.Element(f'{{{self.namespaces["wpml"]}}}actionGroup')
+        ET.SubElement(
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupId').text = str(action_group_id)
+        ET.SubElement(
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupStartIndex').text = str(action_group_index)
+        ET.SubElement(
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupEndIndex').text = str(action_group_index)
+        ET.SubElement(
+            action_group, f'{{{self.namespaces["wpml"]}}}actionGroupMode').text = self.action_group_mode
+
+        action_trigger = ET.SubElement(
+            action_group, f'{{{self.namespaces["wpml"]}}}actionTrigger')
+        ET.SubElement(
+            action_trigger, f'{{{self.namespaces["wpml"]}}}actionTriggerType').text = self.action_trigger_type
+
+        return action_group
+    
+    # -------------------------------------------------------------------------
+    def addPlacemarkActionGimbalRotate(self, idx, gimbalPitchRotateAngle):
+        action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
+        ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionId').text = idx
+        ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionActuatorFunc').text = 'gimbalRotate'
+
+        action_actuator_func_param = ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRotateMode').text = self.gimbalRotateMode
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateEnable').text = self.gimbalPitchRotateEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateAngle').text = gimbalPitchRotateAngle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRollRotateEnable').text = self.gimbalRollRotateEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRollRotateAngle').text = self.gimbalRollRotateAngle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalYawRotateEnable').text = self.gimbalYawRotateEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalYawRotateAngle').text = self.gimbalYawRotateAngle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRotateTimeEnable').text = self.gimbalRotateTimeEnable
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRotateTime').text = self.gimbalRotateTime
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}payloadPositionIndex').text = self.payloadPositionIndex
+
+        return action
+
+
+    # -------------------------------------------------------------------------
+    def addPlacemarkActionOrientedShoot(self, idx, focalLength, orientedFileSuffix, actionUUID, orientedFilePath):
+        action = ET.Element(f'{{{self.namespaces["wpml"]}}}action')
+        ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionId').text = idx
+        ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionActuatorFunc').text = self.action_actuator_func
+
+        action_actuator_func_param = ET.SubElement(
+            action, f'{{{self.namespaces["wpml"]}}}actionActuatorFuncParam')
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalPitchRotateAngle').text = self.gimbal_pitch_rotate_angle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalRollRotateAngle').text = self.gimbal_roll_rotate_angle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalYawRotateAngle').text = self.gimbal_yaw_rotate_angle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}focusX').text = self.focus_x
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}focusY').text = self.focus_y
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}focusRegionWidth').text = self.focus_region_width
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}focusRegionHeight').text = self.focus_region_height
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}focalLength').text = focalLength
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}aircraftHeading').text = self.aircraft_heading
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}accurateFrameValid').text = self.accurate_frame_valid
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}payloadPositionIndex').text = self.payload_position_index
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}useGlobalPayloadLensIndex').text = self.use_global_payload_lens_index
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}targetAngle').text = self.target_angle
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}actionUUID').text = actionUUID
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}imageWidth').text = self.image_width
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}imageHeight').text = self.image_height
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}AFPos').text = self.af_pos
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}gimbalPort').text = self.gimbal_port
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedCameraType').text = self.oriented_camera_type
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedFilePath').text = orientedFilePath
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedFileMD5')
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedFileSize').text = self.oriented_file_size
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedFileSuffix').text = orientedFileSuffix
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedCameraShutterTime').text = self.orientedCameraShutterTime
+        ET.SubElement(action_actuator_func_param,
+                      f'{{{self.namespaces["wpml"]}}}orientedPhotoMode').text = self.oriented_photo_mode
+
+        return action
+
+    # -------------------------------------------------------------------------
+    def addTreePhotosPlacemark(self, idx, lat_y, lon_x, elevation_from_dsm, polygon_id, actionGroupId, actionGroupIndex):
+        placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
+
+        point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+        coordinates_element = ET.SubElement(
+            point, f'{{{self.namespaces["kml"]}}}coordinates')
+        coordinates_element.text = f'{lon_x},{lat_y}'
+
+        wpml_index = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}index')
+        wpml_index.text = str(idx)
+
+        wpml_executeHeight = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
+        wpml_executeHeight.text = elevation_from_dsm
+
+        wpml_waypointSpeed = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
+        wpml_waypointSpeed.text = self.waypointSpeed
+
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
+        placemark.append(wpml_waypointHeadingParam)
+
+        wpml_waypointTurnParam = self.addWaypointTurnParam()
+        placemark.append(wpml_waypointTurnParam)
+
+        wpml_useStraightLine = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_useStraightLine.text = self.use_straight_line
+
+        wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
+        placemark.append(wpml_actionGroup)
+
+        wpml_action = self.addPlacemarkActionOrientedShoot('0', '168', str(
+            polygon_id) + "zoom", '703556e4-81fb-4294-b607-05d5f748377f', '703556e4-81fb-4294-b607-05d5f748377f')
+        wpml_actionGroup.append(wpml_action)
+
+        wpml_action = self.addPlacemarkActionOrientedShoot('1', '24', str(
+            polygon_id), '51ae7825-56de-41d3-90bb-3c9ed6de7960', '393e34ba-016e-4fd3-98bf-3f9fe0c517df')
+        wpml_actionGroup.append(wpml_action)
+
+        wpml_waypointGimbalHeadingParam = self.addWaypointGimbalHeadingParam()
+        placemark.append(wpml_waypointGimbalHeadingParam)
+
+        wpml_is_risky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_is_risky.text = self.stop_is_risky
+
+        wpml_waypointWorkType = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
+        wpml_waypointWorkType.text = self.waypointWorkType
 
         self.folder.append(placemark)
 
@@ -224,28 +525,25 @@ class BuildWaylinesWPML:
         # Reopen, beautify it, and save it
         pretty_xml_str = self.beautify_xml()
 
-        # Save the updated KML file
+        # Save the updated WPML file
         wpml_path = Path(config.base_path) / config.base_name / \
             config.output_wpml_file_path
-
         os.makedirs(os.path.dirname(
             wpml_path), exist_ok=True)
-        with open(wpml_path, 'w', encoding='utf-8') as file:
+        with open(wpml_path, 'w', encoding='UTF-8') as file:
             file.write(pretty_xml_str)
 
     # -------------------------------------------------------------------------
     def beautify_xml(self):
 
         # Convert the XML tree to a string
-        xml_str = ET.tostring(self.tree.getroot(),
-                              encoding='utf-8', xml_declaration=True)
+        xml_str = ET.tostring(self.tree.getroot(), encoding='unicode')
 
         # Parse the XML string
         dom = parseString(xml_str)
 
         # Pretty print the XML with an indentation of 2 spaces
-        pretty_xml_str = dom.toprettyxml(
-            indent="  ", encoding='utf-8').decode('utf-8')
+        pretty_xml_str = dom.toprettyxml(indent="  ")
 
         # Remove empty lines
         non_empty_lines = [
