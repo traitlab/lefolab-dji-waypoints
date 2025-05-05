@@ -9,7 +9,7 @@
       <wpml:exitOnRCLost>executeLostAction</wpml:exitOnRCLost>
       <wpml:executeRCLostAction>goBack</wpml:executeRCLostAction>
       <wpml:takeOffSecurityHeight>100</wpml:takeOffSecurityHeight>
-      <wpml:takeOffRefPoint>0.000000,0.000000,326.666412</wpml:takeOffRefPoint>
+      <wpml:takeOffRefPoint>0.000000,0.000000,0.000000</wpml:takeOffRefPoint>
       <wpml:globalTransitionalSpeed>15</wpml:globalTransitionalSpeed>
       <wpml:droneInfo>
         <wpml:droneEnumValue>77</wpml:droneEnumValue>
