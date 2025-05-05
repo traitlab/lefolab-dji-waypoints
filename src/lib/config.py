@@ -53,8 +53,10 @@ if args.config:
     config = load_config(args.config)
     config.debug_mode = args.debug
 else:
-    # Get base_name from CSV file path
+    # Get base_name from CSV file path and replace special characters with '-'
     base_name = Path(args.csv).stem  # Get filename without extension
+    for char in ['/', '\\', '|', '?', '*', '.', '_']:
+        base_name = base_name.replace(char, '-')
     
     # Create a default Config object with command line values
     config = Config(
