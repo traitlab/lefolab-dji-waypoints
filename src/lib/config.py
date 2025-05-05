@@ -27,8 +27,8 @@ parser.add_argument('--config', '-s', type=str, required=False,
                     help='Path to the configuration file. Other choice is to provide the --csv option.')
 parser.add_argument('--csv', '-c', type=str, required=False,
                     help='Path to the input CSV file containing waypoints. Other choice is to provide the --config option.')
-parser.add_argument('--output', '-o', type=str, default='./output',
-                    help='Output directory path (default: ./output)')
+parser.add_argument('--output', '-o', type=str, required=None,
+                    help='Output directory path (default: same directory as input file)')
 parser.add_argument('--approach', '-a', type=float, default=10,
                     help='Approach above the tree crown in meters (default: 10)')
 parser.add_argument('--buffer', '-b', type=float, default=6,
@@ -42,6 +42,11 @@ args = parser.parse_args()
 if not args.config and not args.csv:
     parser.error("Either --config or --csv must be provided")
     sys.exit(1)
+
+# Set default output path to input file directory if not specified
+if args.output is None:
+    input_path = args.config if args.config else args.csv
+    args.output = str(Path(input_path).parent)
 
 # Create config object
 if args.config:
