@@ -37,7 +37,7 @@
         "--output",
         "${workspaceFolder}/test/output",
         "--csv",
-        "${workspaceFolder}/test/input/waypointVLF025tenpt.csv"
+        "${workspaceFolder}/test/input/waypointVLF026tenpt.csv"
       ]
     },
     {
@@ -54,7 +54,7 @@
         "-o",
         "${workspaceFolder}/test/output",
         "-c",
-        "${workspaceFolder}/test/input/waypointVLF025onept.csv"
+        "${workspaceFolder}/test/input/waypointVLF026onept.csv"
       ]
     }
   ]

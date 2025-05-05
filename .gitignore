@@ -5,7 +5,7 @@ output
 secrets
 /notebooks/
 *.code-workspace
-.vscode
+# .vscode
 
 /logs/
 /log/
