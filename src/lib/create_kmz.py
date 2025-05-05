@@ -15,10 +15,10 @@ class CreateKMZ:
         
         # Use datetime in filename only if not in debug mode
         if config.debug_mode == False:
-            self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}.kmz"
+            self.kmz_file_path = Path(config.base_path) / config.base_name / f"{config.base_name}.kmz"
         else:
             current_datetime = datetime.now().strftime("%Y%m%dT%H%M%S")            
-            self.kmz_file_path = Path(config.base_path) / config.base_name / f"wpmz" / f"{config.base_name}_{current_datetime}.kmz"
+            self.kmz_file_path = Path(config.base_path) / config.base_name / f"{config.base_name}_{current_datetime}.kmz"
 
     # -------------------------------------------------------------------------
     def create_kmz(self):
@@ -29,7 +29,7 @@ class CreateKMZ:
             if template_path.exists():
                 kmz.write(template_path, "wpmz/template.kml")
             
-            # # Add waylines.wpml under wpmz folder
-            # wpml_path = self.wpmz_dir / "waylines.wpml"
-            # if wpml_path.exists():
-            #     kmz.write(wpml_path, "wpmz/waylines.wpml")
+            # Add waylines.wpml under wpmz folder
+            wpml_path = self.wpmz_dir / "waylines.wpml"
+            if wpml_path.exists():
+                kmz.write(wpml_path, "wpmz/waylines.wpml")
