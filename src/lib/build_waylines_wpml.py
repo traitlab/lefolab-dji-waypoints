@@ -18,7 +18,7 @@ class BuildWaylinesWPML:
         self.cpt_csv_properties = None
 
         self.waypointSpeed = '15'
-        self.waypointSpeed_approach = '1'
+        self.waypointSpeed_approach = '3'
         # waypointTurnParam
         self.waypointTurnMode = 'toPointAndStopWithDiscontinuityCurvature'
         self.waypointTurnDampingDist = '0'
