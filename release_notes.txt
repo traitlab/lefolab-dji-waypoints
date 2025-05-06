@@ -5,10 +5,13 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.9 vincent.lefalher@umontreal.ca 20250506
+- changer la valeur de <wpml:ellipsoidHeight> dans template.kml pour la valeur en ellips (la même que la valeur que <wpml:executeHeight> dans waylines.wpml). Seulement <wpml:height> va rester en ASL finalement
+- mettre à jour <wpml:createTime> et <wpml:updateTime> dans template.kml
+
 0.2.8 vincent.lefalher@umontreal.ca 20250506
 - removes unecessary polygon_id 
 - multiple fixes by antoine : output path optional; taking input path as output path; base name special chars replaced by '-'; reset takeOffRefPoint height to 0 ; reset distance & duration to 0
-
 
 0.2.7 vincent.lefalher@umontreal.ca 20250505
 - merge dans v2 de la génération des waylines.wpml. similaire à la génération du template.kml pour faciliter les futurs changements. 

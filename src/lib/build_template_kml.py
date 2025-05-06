@@ -1,6 +1,7 @@
 import csv
 import os
 import sys
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from xml.dom.minidom import parseString
@@ -122,6 +123,17 @@ class BuildTemplateKML:
         self.tree = ET.parse(config.kml_model_file_path)
         self.root = self.tree.getroot()
 
+        # update createTime and updateTime 
+        # <wpml:createTime>1746106606744</wpml:createTime>
+        # <wpml:updateTime>1746107830523</wpml:updateTime>
+
+        # Get current time in milliseconds since epoch
+        now_ms = int(time.time() * 1000)
+        for tag in ['createTime', 'updateTime']:
+            elem = self.root.find(f'.//wpml:{tag}', self.namespaces)
+            if elem is not None:
+                elem.text = str(now_ms)        
+
         # Find the Folder element
         self.folder = self.root.find('.//kml:Folder', self.namespaces)
         # Remove all existing Placemark elements with Point
@@ -144,26 +156,30 @@ class BuildTemplateKML:
 
             index = idx * 4
             actionGroupId = idx * 3
-            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
+            height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index, lat_y, lon_x, height, '-90', actionGroupId, index)
+                index, lat_y, lon_x, height_ellips, height_egm96, '-90', actionGroupId, index)
             
-            height = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            height_ellips = str(float(wpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
+            height_egm96 = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
-                index + 1, lat_y, lon_x, height)
+                index + 1, lat_y, lon_x, height_ellips, height_egm96)
 
-            height = str(float(wpt_ellips_height_egm96) + float(config.buffer))
+            height_ellips = str(float(wpt_elevation_from_dsm) + float(config.buffer))
+            height_egm96 = str(float(wpt_ellips_height_egm96) + float(config.buffer))
             self.addTreePhotosPlacemark(
-                index + 2, lat_y, lon_x, height, polygon_id, actionGroupId + 1, index + 2)
+                index + 2, lat_y, lon_x, height_ellips, height_egm96, polygon_id, actionGroupId + 1, index + 2)
             
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
             _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
-            height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+            height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
+            height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index + 3, lat_y, lon_x, height, '-15', actionGroupId + 2, index + 3)
+                index + 3, lat_y, lon_x, height_ellips, height_egm96, '-15', actionGroupId + 2, index + 3)
 
     # -------------------------------------------------------------------------
-    def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
+    def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height_ellips, height_egm96, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
         # Add new Placemark elements for each coordinate
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
@@ -178,11 +194,11 @@ class BuildTemplateKML:
 
         wpml_ellipsoidHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
-        wpml_ellipsoidHeight.text = height
+        wpml_ellipsoidHeight.text = height_ellips
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
-        wpml_height.text = height
+        wpml_height.text = height_egm96
 
         wpml_use_global_speed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
@@ -213,7 +229,7 @@ class BuildTemplateKML:
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
-    def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height):
+    def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height_ellips, height_egm96):
         # Add new Placemark elements for each coordinate
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
@@ -228,11 +244,11 @@ class BuildTemplateKML:
 
         wpml_ellipsoidHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
-        wpml_ellipsoidHeight.text = height
+        wpml_ellipsoidHeight.text = height_ellips
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
-        wpml_height.text = height
+        wpml_height.text = height_egm96
 
         wpml_waypointSpeed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
@@ -373,7 +389,7 @@ class BuildTemplateKML:
         return action
 
     # -------------------------------------------------------------------------
-    def addTreePhotosPlacemark(self, idx, lat_y, lon_x, elevation_from_dsm, polygon_id, actionGroupId, actionGroupIndex):
+    def addTreePhotosPlacemark(self, idx, lat_y, lon_x, height_ellips, height_egm96, polygon_id, actionGroupId, actionGroupIndex):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
@@ -387,11 +403,11 @@ class BuildTemplateKML:
 
         wpml_ellipsoidHeight = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
-        wpml_ellipsoidHeight.text = elevation_from_dsm
+        wpml_ellipsoidHeight.text = height_ellips
 
         wpml_height = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}height')
-        wpml_height.text = elevation_from_dsm
+        wpml_height.text = height_egm96
 
         wpml_useGlobalSpeed = ET.SubElement(
             placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
