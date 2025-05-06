@@ -22,8 +22,8 @@
       <wpml:templateId>0</wpml:templateId>
       <wpml:executeHeightMode>WGS84</wpml:executeHeightMode>
       <wpml:waylineId>0</wpml:waylineId>
-      <wpml:distance>859.6142578125</wpml:distance>
-      <wpml:duration>200.531814575195</wpml:duration>
+      <wpml:distance>0.0000</wpml:distance>
+      <wpml:duration>0.0000</wpml:duration>
       <wpml:autoFlightSpeed>15</wpml:autoFlightSpeed>
       <Placemark>
         <Point>
