@@ -5,6 +5,11 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.8 vincent.lefalher@umontreal.ca 20250506
+- removes unecessary polygon_id 
+- multiple fixes by antoine : output path optional; taking input path as output path; base name special chars replaced by '-'; reset takeOffRefPoint height to 0 ; reset distance & duration to 0
+
+
 0.2.7 vincent.lefalher@umontreal.ca 20250505
 - merge dans v2 de la génération des waylines.wpml. similaire à la génération du template.kml pour faciliter les futurs changements. 
 v2 contient : 

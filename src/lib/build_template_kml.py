@@ -146,11 +146,11 @@ class BuildTemplateKML:
             actionGroupId = idx * 3
             height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index, lat_y, lon_x, height, polygon_id, '-90', actionGroupId, index)
+                index, lat_y, lon_x, height, '-90', actionGroupId, index)
             
             height = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
-                index + 1, lat_y, lon_x, height, polygon_id)
+                index + 1, lat_y, lon_x, height)
 
             height = str(float(wpt_ellips_height_egm96) + float(config.buffer))
             self.addTreePhotosPlacemark(
@@ -160,12 +160,11 @@ class BuildTemplateKML:
             _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
             height = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index + 3, lat_y, lon_x, height, polygon_id, '-15', actionGroupId + 2, index + 3)
+                index + 3, lat_y, lon_x, height, '-15', actionGroupId + 2, index + 3)
 
     # -------------------------------------------------------------------------
-    def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, polygon_id, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
+    def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
         # Add new Placemark elements for each coordinate
-        # for idx, (lat_y, lon_x, elevation_from_dsm, polygon_id) in enumerate(self.csv_properties):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
@@ -214,9 +213,8 @@ class BuildTemplateKML:
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
-    def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height, polygon_id):
+    def addTreeApproachPlacemark(self, idx, lat_y, lon_x, height):
         # Add new Placemark elements for each coordinate
-        # for idx, (lat_y, lon_x, elevation_from_dsm, polygon_id) in enumerate(self.csv_properties):
         placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
         point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
