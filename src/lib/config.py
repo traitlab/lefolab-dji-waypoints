@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from pydantic import ValidationError
 
 from model.config import Config
 
@@ -48,22 +49,35 @@ if args.output is None:
     input_path = args.config if args.config else args.csv
     args.output = str(Path(input_path).parent)
 
-# Create config object
-if args.config:
-    config = load_config(args.config)
-    config.debug_mode = args.debug
-else:
-    # Get base_name from CSV file path and replace special characters with '-'
-    base_name = Path(args.csv).stem  # Get filename without extension
-    for char in ['/', '\\', '|', '?', '*', '.', '_']:
-        base_name = base_name.replace(char, '-')
-    
-    # Create a default Config object with command line values
-    config = Config(
-        approach=args.approach,
-        buffer=args.buffer,
-        base_path=args.output,
-        base_name=base_name,
-        points_csv_file_path=args.csv,
-        debug_mode=args.debug
-    )
+try:
+    # Create config object
+    if args.config:
+        config = load_config(args.config)
+        config.debug_mode = args.debug
+    else:
+        # Get base_name from CSV file path and replace special characters with '-'
+        base_name = Path(args.csv).stem  # Get filename without extension
+        for char in ['/', '\\', '|', '?', '*', '.', '_']:
+            base_name = base_name.replace(char, '-')
+        
+        # Create a default Config object with command line values
+        config = Config(
+            approach=args.approach,
+            buffer=args.buffer,
+            base_path=args.output,
+            base_name=base_name,
+            points_csv_file_path=args.csv,
+            debug_mode=args.debug
+        )
+except ValidationError as e:
+    print("Error: Invalid configuration")
+    for error in e.errors():
+        if error["type"] == "path_not_file":
+            print(f"CSV file not found: {args.csv}")
+            print("Please ensure the CSV file exists and the path is correct.")
+        else:
+            print(f"Validation error: {error['msg']}")
+    sys.exit(1)
+except Exception as e:
+    print(f"Unexpected error: {str(e)}")
+    sys.exit(1)

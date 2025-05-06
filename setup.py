@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="lefolab-dji-waypoints",
-    version="0.2.9",
+    version="0.2.10",
     author="Vincent Le Falher",
     author_email="vincent.lefalher@umontreal.ca",
     description="LEFO LAB DJI KMZ Generator",

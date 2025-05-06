@@ -5,6 +5,9 @@ Features / TODO :
 Issues
 - No know issues
 
+0.2.10 vincent.lefalher@umontreal.ca 20250506
+- manage exception if wrong CSV path and other validation error or exception
+
 0.2.9 vincent.lefalher@umontreal.ca 20250506
 - changer la valeur de <wpml:ellipsoidHeight> dans template.kml pour la valeur en ellips (la même que la valeur que <wpml:executeHeight> dans waylines.wpml). Seulement <wpml:height> va rester en ASL finalement
 - mettre à jour <wpml:createTime> et <wpml:updateTime> dans template.kml
