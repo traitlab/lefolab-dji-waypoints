@@ -37,7 +37,7 @@
         "--output",
         "${workspaceFolder}/test/output",
         "--csv",
-        "${workspaceFolder}/test/input/test_ont_wpt.csv"
+        "${workspaceFolder}/test/input/test_one_wpt.csv"
       ]
     },
     {
@@ -54,7 +54,7 @@
         "-o",
         "${workspaceFolder}/test/output",
         "-c",
-        "${workspaceFolder}/test/input/test_ont_wpt.csv"
+        "${workspaceFolder}/test/input/test_one_wpt.csv"
       ]
     }
   ]

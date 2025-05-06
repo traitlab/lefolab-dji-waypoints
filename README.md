@@ -1,88 +1,77 @@
 # lefolab-dji-waypoints
-
-App and integration with drone
-
-# Installation
+## Setup
 
 ```bash
-cd /app
-git clone https://vince7lf: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@github.com/vincelf-IVADO/lefolab-dji-waypoints.git
-cd /app/lefolab-dji-waypoints
-python3 -m venv .venv
-source ./.venv/bin/activate
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
+# Clone the module into /opt/treesight 
+cd /opt/treesight
+git clone https://github.com/traitlab/lefolab-dji-waypoints.git
+cd lefolab-dji-waypoints
+
+# Checkout v2
+git checkout v2
+
+# create conda venv
+source /opt/miniconda3/bin/activate
+conda create --yes --name dji-waypoints python=3.8
+conda activate dji-waypoints
+
+# Update pip and install requirements
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+# Create output test folder
+mkdir -p test/output
 ```
 
-# Requirements
-
-- CSV file containing the points to be used to generate the waypoint mission.
-
-# Configuration
-
-Configuration file should be located under `/app/lefolab-dji-waypoints/config`. 
-
-Samples are given (`settings.yaml`, `settings@lefotitan_20240529_sblz1z2_p1.yaml`)
-
-Here is a configuration sample : 
-
-```yaml
-flight_height: 400
-takeoff_point_elevation: 331
-# <wpml:height>385.799987792969</wpml:height> Voir Google Earth qui est altitude orthométrique
-# conversion GPSh NRCAN.GC.CA
-point_dsm_height_approach: 5
-point_dsm_height_buffer: 10
-# buffer is added to the flight height
-# it's also used to add a buffer to the height above the tree for the picture
-
-base_path: '/data/xprize'
-base_name: '20240529_sblz1z2_p1'
-points_csv_file_path: '/data/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1_waypoints_shortest_path.csv'
-
-# required depending on the installation path. If started from the project folder, no need as defaujlt is relative to project folder.
-# kml_model_file_path: '/opt/treesight/lefolab-dji-waypoints/scripts/wpml/model/Waypoint2/wpmz/template.kml'
-# wpml_model_file_path: '/opt/treesight/lefolab-dji-waypoints/scripts/wpml/model/Waypoint2/wpmz/waylines.wpml'
-# waylines_placemark_no_action: '/opt/treesight/lefolab-dji-waypoints/config/waylines_placemark_no_action.json'
-# waylines_placemark_with_actions: '/opt/treesight/lefolab-dji-waypoints/config/waylines_placemark_with_action.json'
-```
-
-# test data
-```
-mkdir -p /data/xprize/20240529_sblz1z2_p1
-cd /data/xprize/20240529_sblz1z2_p1
-# Downdload data from Google Drive using browser
-# https://drive.google.com/drive/folders/1A_qd60c40s3TuK89o3ZAFM27lRA-5KbS?usp=drive_link
-# copy from Downloads to /data/xprize/20240529_sblz1z2_p1
-cp ~/Downloads/20240529_sblz1z2_p1.gpkg /data/xprize/20240529_sblz1z2_p1
-cp ~/Downloads/20240529_sblz1z2_p1_zone_of_interest.gpkg /data/xprize/20240529_sblz1z2_p1
-cp ~/Downloads/20240529_sblz1z2_p1_dsm_highdis.cog.tif /data/xprize/20240529_sblz1z2_p1
-```
-
-# Run
-
-## Using --config option
+## Generate the waypoints
+### Admin user
 
 ```bash
-cd /app/lefolab-dji-waypoints
-source /app/lefolab-dji-waypoints/.venv/bin/activate
-python /app/lefolab-dji-waypoints/src/main.py --config /app/lefolab-dji-waypoints/config/settings@lefotitan_20240529_sblz1z2_p1.yaml
+source /opt/miniconda3/bin/activate
+conda activate dji-waypoints
+# mandatory because kml and wpml models are relative
+cd /opt/treesight/lefolab-dji-waypoints
+python src/main.py --csv ./test/input/test_one_wpt.csv --output ./test/output
 ```
 
-## Using --csv option
+### User
 
 ```bash
-cd /app/lefolab-dji-waypoints
-source /app/lefolab-dji-waypoints/.venv/bin/activate
-python /app/lefolab-dji-waypoints/src/main.py --flight_height 400 --takeoff_point_elevation 331 --point_dsm_height_approach 5 --point_dsm_height_buffer 10 --output /mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1 --csv /mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1/20240529_sblz1z2_p1.csv
+source /opt/miniconda3/bin/activate
+conda activate dji-waypoints
+# mandatory because kml and wpml models are relative
+cd /opt/treesight/lefolab-dji-waypoints
+python /opt/treesight/lefolab-dji-waypoints/src/main.py --csv /data/<username>/input/test_one_wpt.csv --output /data/<username>/output
 ```
 
-# Results 
+## Validate
 
-Generated files (KMZ, wpmz/template.kml, wpmz/waylines.wpml) are located in :
-`/mnt/c/Users/vincent.le.falher/Downloads/UdeM/xprize/20240529_sblz1z2_p1`
+Using the command and input CSV aboce, the generated files are : 
 
-The CSV basename is used as the KMZ filename
+```bash
+test/ouput/
+└── test-one-wpt
+    ├── test-one-wpt.kmz
+    └── wpmz
+        ├── template.kml
+        └── waylines.wpml
+```
+
+```bash
+test/ouput/test-one-wpt/:
+total 16
+drwxrwsr-x 3 lefolab treesight 4096 May  6 11:00 ..
+drwxrwsr-x 2 lefolab treesight 4096 May  6 11:00 wpmz
+drwxrwsr-x 3 lefolab treesight 4096 May  6 11:00 .
+-rw-rw-r-- 1 lefolab treesight 3463 May  6 11:17 test-one-wpt.kmz
+
+test/ouput/test-one-wpt/wpmz:
+total 36
+drwxrwsr-x 3 lefolab treesight  4096 May  6 11:00 ..
+drwxrwsr-x 2 lefolab treesight  4096 May  6 11:00 .
+-rw-rw-r-- 1 lefolab treesight 12089 May  6 11:17 template.kml
+-rw-rw-r-- 1 lefolab treesight 13785 May  6 11:17 waylines.wpml
+```
 
 ## Debug mode
 
