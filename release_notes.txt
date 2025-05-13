@@ -1,6 +1,6 @@
 Features / TODO : 
 - Existe t il une option (p-e juste dans SDK?) pour utiliser le mode vision pour naviguer entre les arbres? Par exemple le mode smart RTH qui utilise le path le plus efficace…
-
+- Tous les n placemark (option; 10 défaut, min 5, pas max) aller n metre (option; 100 default; max 200); option activée par défaut (true/false, yes/no, 0/1)
 
 Issues
 - No know issues
