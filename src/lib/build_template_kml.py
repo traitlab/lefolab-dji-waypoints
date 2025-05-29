@@ -148,35 +148,58 @@ class BuildTemplateKML:
         # Return to home altitude is also set on the drone remote by the pilote for the last point
 
         # Add new Placemark elements for each coordinate
-        actionGroupId = 0
+        base_index = 0
+        action_group_id = 0
+        touch_sky_count = 0
+
         for idx, (lat_y, lon_x, wpt_elevation_from_dsm, polygon_id) in enumerate(self.wpt_csv_properties):
             _, _, wpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, wpt_elevation_from_dsm)
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx][2]
             _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
 
-            index = idx * 4
-            actionGroupId = idx * 3
+            # Standard sequence
             height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index, lat_y, lon_x, height_ellips, height_egm96, '-90', actionGroupId, index)
+            base_index, lat_y, lon_x, height_ellips, height_egm96, '-90', action_group_id, base_index)
             
             height_ellips = str(float(wpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             height_egm96 = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
-                index + 1, lat_y, lon_x, height_ellips, height_egm96)
+            base_index + 1, lat_y, lon_x, height_ellips, height_egm96)
 
             height_ellips = str(float(wpt_elevation_from_dsm) + float(config.buffer))
             height_egm96 = str(float(wpt_ellips_height_egm96) + float(config.buffer))
             self.addTreePhotosPlacemark(
-                index + 2, lat_y, lon_x, height_ellips, height_egm96, polygon_id, actionGroupId + 1, index + 2)
+            base_index + 2, lat_y, lon_x, height_ellips, height_egm96, polygon_id, action_group_id + 1, base_index + 2)
             
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
             _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
             height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index + 3, lat_y, lon_x, height_ellips, height_egm96, '-15', actionGroupId + 2, index + 3)
+            base_index + 3, lat_y, lon_x, height_ellips, height_egm96, '-15', action_group_id + 2, base_index + 3)
+
+            touch_sky_count += 1
+            
+            # Add touch-sky action if enabled and interval is reached
+            if config.touch_sky and touch_sky_count >= config.touch_sky_interval:
+                height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach) + float(config.touch_sky_altitude))
+                height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach) + float(config.touch_sky_altitude))
+                self.addTouchSkyPlacemark(
+                    base_index + 4, lat_y, lon_x, height_ellips, height_egm96, '-90', action_group_id + 3, base_index + 4)
+                
+                height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
+                height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
+                self.addTreeFirstLastPlacemark(
+                    base_index + 5, lat_y, lon_x, height_ellips, height_egm96, '-15', action_group_id + 4, base_index + 5)
+                
+                base_index += 6  # Increment by 6 when touch-sky is added
+                action_group_id += 5  # Increment by 5 when touch-sky is added
+                touch_sky_count = 0
+            else:
+                base_index += 4  # Normal increment by 4
+                action_group_id += 3  # Normal increment by 3
 
     # -------------------------------------------------------------------------
     def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height_ellips, height_egm96, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
@@ -440,6 +463,57 @@ class BuildTemplateKML:
             placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
         wpml_isRisky.text = self.is_risky
 
+        self.folder.append(placemark)
+
+    # -------------------------------------------------------------------------
+    def addTouchSkyPlacemark(self, idx, lat_y, lon_x, height_ellips, height_egm96, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
+        placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
+
+        point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+        coordinates_element = ET.SubElement(
+            point, f'{{{self.namespaces["kml"]}}}coordinates')
+        coordinates_element.text = f'{lon_x},{lat_y}'
+        
+        wpml_index = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}index')
+        wpml_index.text = str(idx)
+        
+        wpml_ellipsoidHeight = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}ellipsoidHeight')
+        wpml_ellipsoidHeight.text = height_ellips
+        
+        wpml_height = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}height')
+        wpml_height.text = height_egm96
+
+        wpml_use_global_speed = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalSpeed')
+        wpml_use_global_speed.text = self.use_global_speed
+
+        wpml_use_global_heading_param = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalHeadingParam')
+        wpml_use_global_heading_param.text = self.use_global_heading_param
+
+        wpml_use_global_turn_param = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useGlobalTurnParam')
+        wpml_use_global_turn_param.text = self.use_global_turn_param
+
+        wpml_use_straight_line = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_use_straight_line.text = self.use_straight_line
+
+        wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
+        placemark.append(wpml_actionGroup)
+
+        wpml_action = self.addPlacemarkActionGimbalRotate('0', gimbalPitchRotateAngle)
+        wpml_actionGroup.append(wpml_action)
+
+        wpml_is_risky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_is_risky.text = self.is_risky
+        
+        # Add hover action for 5 seconds ----- TODO
+        
         self.folder.append(placemark)
 
     # -------------------------------------------------------------------------
