@@ -14,6 +14,10 @@ class Config(BaseModel):
 
     points_csv_file_path: FilePath
 
+    touch_sky: bool
+    touch_sky_interval: int
+    touch_sky_altitude: float
+
     kml_model_file_path: FilePath = './scripts/wpml/model/onewpt-Remote.kmz.org/wpmz/template.kml'
     output_kml_file_path: Path = 'wpmz/template.kml'
     wpml_model_file_path: FilePath = './scripts/wpml/model/onewpt-Remote.kmz.org/wpmz/waylines.wpml'
