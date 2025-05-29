@@ -38,7 +38,7 @@ parser.add_argument('--touch-sky', '-t', type=bool, default=True,
                     help='Enable touch-sky feature where drone flies up periodically (default: True)')
 parser.add_argument('--touch-sky-interval', '-n', type=int, default=10,
                     help='Number of placemarks between each touch-sky action (default: 10, min: 5)')
-parser.add_argument('--touch-sky-altitude', '-h', type=float, default=100,
+parser.add_argument('--touch-sky-altitude', '-alt', type=float, default=100,
                     help='Altitude in meters above DSM for touch-sky action (default: 100, max: 200)')
 parser.add_argument('--debug', '-d', action='store_true',
                     help='Run in debug mode (default: False)')
