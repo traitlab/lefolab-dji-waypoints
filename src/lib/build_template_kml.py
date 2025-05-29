@@ -161,24 +161,24 @@ class BuildTemplateKML:
             height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-            base_index, lat_y, lon_x, height_ellips, height_egm96, '-90', action_group_id, base_index)
+                base_index, lat_y, lon_x, height_ellips, height_egm96, '-90', action_group_id, base_index)
             
             height_ellips = str(float(wpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             height_egm96 = str(float(wpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
-            base_index + 1, lat_y, lon_x, height_ellips, height_egm96)
+                base_index + 1, lat_y, lon_x, height_ellips, height_egm96)
 
             height_ellips = str(float(wpt_elevation_from_dsm) + float(config.buffer))
             height_egm96 = str(float(wpt_ellips_height_egm96) + float(config.buffer))
             self.addTreePhotosPlacemark(
-            base_index + 2, lat_y, lon_x, height_ellips, height_egm96, polygon_id, action_group_id + 1, base_index + 2)
+                base_index + 2, lat_y, lon_x, height_ellips, height_egm96, polygon_id, action_group_id + 1, base_index + 2)
             
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
             _, _, cpt_ellips_height_egm96 = transform_to_egm96(lat_y, lon_x, cpt_elevation_from_dsm)
             height_ellips = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             height_egm96 = str(float(cpt_ellips_height_egm96) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-            base_index + 3, lat_y, lon_x, height_ellips, height_egm96, '-15', action_group_id + 2, base_index + 3)
+                base_index + 3, lat_y, lon_x, height_ellips, height_egm96, '-15', action_group_id + 2, base_index + 3)
 
             touch_sky_count += 1
             

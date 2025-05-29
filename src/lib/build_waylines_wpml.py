@@ -143,28 +143,49 @@ class BuildWaylinesWPML:
         # Return to home altitude is also set on the drone remote by the pilote for the last point
 
         # Add new Placemark elements for each coordinate
-        actionGroupId = 0
+        base_index = 0
+        action_group_id = 0
+        touch_sky_count = 0
+
         for idx, (lat_y, lon_x, wpt_elevation_from_dsm, polygon_id) in enumerate(self.wpt_csv_properties):
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx][2]
 
-            index = idx * 4
-            actionGroupId = idx * 3
+            # Standard sequence
             height = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index, lat_y, lon_x, height, polygon_id, '-90', actionGroupId, index)
+                base_index, lat_y, lon_x, height, polygon_id, '-90', action_group_id, base_index)
             
             height = str(float(wpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             self.addTreeApproachPlacemark(
-                index + 1, lat_y, lon_x, height, polygon_id)
+                base_index + 1, lat_y, lon_x, height, polygon_id)
 
             height = str(float(wpt_elevation_from_dsm) + float(config.buffer))
             self.addTreePhotosPlacemark(
-                index + 2, lat_y, lon_x, height, polygon_id, actionGroupId + 1, index + 2)
+                base_index + 2, lat_y, lon_x, height, polygon_id, action_group_id + 1, base_index + 2)
             
             cpt_elevation_from_dsm = self.cpt_csv_properties[idx+1][2]
             height = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
             self.addTreeFirstLastPlacemark(
-                index + 3, lat_y, lon_x, height, polygon_id, '-15', actionGroupId + 2, index + 3)
+                base_index + 3, lat_y, lon_x, height, polygon_id, '-15', action_group_id + 2, base_index + 3)
+            
+            touch_sky_count += 1
+
+            # Add touch-sky action if enabled and interval is reached
+            if config.touch_sky and touch_sky_count >= config.touch_sky_interval:
+                height = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach) + float(config.touch_sky_altitude))
+                self.addTouchSkyPlacemark(
+                    base_index + 4, lat_y, lon_x, height, polygon_id, '-90', action_group_id + 3, base_index + 4)
+                
+                height = str(float(cpt_elevation_from_dsm) + float(config.buffer) + float(config.approach))
+                self.addTreeFirstLastPlacemark(
+                    base_index + 5, lat_y, lon_x, height, polygon_id, '-15', action_group_id + 4, base_index + 5)
+                
+                base_index += 6  # Increment by 6 when touch-sky is added
+                action_group_id += 5  # Increment by 5 when touch-sky is added
+                touch_sky_count = 0
+            else:
+                base_index += 4  # Normal increment by 4
+                action_group_id += 3  # Normal increment by 3
 
     # -------------------------------------------------------------------------
     def addTreeFirstLastPlacemark(self, idx, lat_y, lon_x, height, polygon_id, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
@@ -488,7 +509,59 @@ class BuildWaylinesWPML:
         wpml_waypointWorkType.text = self.waypointWorkType
 
         self.folder.append(placemark)
+    
+    # -------------------------------------------------------------------------
+    def addTouchSkyPlacemark(self, idx, lat_y, lon_x, height, polygon_id, gimbalPitchRotateAngle, actionGroupId, actionGroupIndex):
+        placemark = ET.Element(f'{{{self.namespaces["kml"]}}}Placemark')
 
+        point = ET.SubElement(placemark, f'{{{self.namespaces["kml"]}}}Point')
+        coordinates_element = ET.SubElement(
+            point, f'{{{self.namespaces["kml"]}}}coordinates')
+        coordinates_element.text = f'{lon_x},{lat_y}'
+
+        wpml_index = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}index')
+        wpml_index.text = str(idx)
+
+        wpml_executeHeight = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}executeHeight')
+        wpml_executeHeight.text = height
+
+        wpml_waypointSpeed = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointSpeed')
+        wpml_waypointSpeed.text = self.waypointSpeed
+
+        wpml_waypointHeadingParam = self.addWaypointHeadingParam()
+        placemark.append(wpml_waypointHeadingParam)
+
+        wpml_waypointTurnParam = self.addWaypointTurnParam()
+        placemark.append(wpml_waypointTurnParam)
+
+        wpml_use_straight_line = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}useStraightLine')
+        wpml_use_straight_line.text = self.use_straight_line
+
+        wpml_actionGroup = self.addPlacemarkActionGroup(actionGroupId, actionGroupIndex)
+        placemark.append(wpml_actionGroup)
+
+        wpml_action = self.addPlacemarkActionGimbalRotate('0', gimbalPitchRotateAngle)
+        wpml_actionGroup.append(wpml_action)
+
+        wpml_waypointGimbalHeadingParam = self.addWaypointGimbalHeadingParam()
+        placemark.append(wpml_waypointGimbalHeadingParam)
+
+        wpml_is_risky = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}isRisky')
+        wpml_is_risky.text = self.is_risky
+
+        wpml_waypointWorkType = ET.SubElement(
+            placemark, f'{{{self.namespaces["wpml"]}}}waypointWorkType')
+        wpml_waypointWorkType.text = self.waypointWorkType
+
+        # Add hover action for 5 seconds ----- TODO
+
+        self.folder.append(placemark)
+    
     # -------------------------------------------------------------------------
     def saveNewWPML(self):
         # Reopen, beautify it, and save it
