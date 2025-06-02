@@ -1,9 +1,12 @@
 Features / TODO : 
 - Existe t il une option (p-e juste dans SDK?) pour utiliser le mode vision pour naviguer entre les arbres? Par exemple le mode smart RTH qui utilise le path le plus efficace…
-- Tous les n placemark (option; 10 défaut, min 5, pas max) aller n metre (option; 100 default; max 200); option activée par défaut (true/false, yes/no, 0/1)
+- Add hover action when doing touch sky
 
 Issues
 - No know issues
+
+0.2.11 antoine.caron-guay@umontreal.ca 20250529
+- adding touch sky feature: tous les n placemark (option; 10 défaut, min 5, pas max) aller n metre (option; 100 default; max 200); option activée par défaut (true/false, yes/no, 0/1)
 
 0.2.10 vincent.lefalher@umontreal.ca 20250506
 - manage exception if wrong CSV path and other validation error or exception
